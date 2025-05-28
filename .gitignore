@@ -1,0 +1,4 @@
+   .gitignore
+        .vite/
+        README.md
+        node_modules/
