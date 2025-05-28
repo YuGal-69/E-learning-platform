@@ -1,0 +1,83 @@
+Folder PATH listing for volume ZeroAccessZone
+Volume serial number is 42BA-2572
+Y:\CYBERNINJA-REACT\CYBERNINJA\SRC
+|   App.css
+|   App.jsx
+|   App.test.jsx
+|   index.css
+|   index.jsx
+|   main.jsx
+|   reportWebVitals.jsx
+|   setupTests.jsx
+|   
++---assets
+|       ar.webp
+|       Avtar.jpg
+|       badge1.webp
+|       certificate.webp
+|       chatbot-icon.webp
+|       chatbot.png
+|       Designer.png
+|       download.jpg
+|       game1.jpg
+|       game2.jpg
+|       game4.webp
+|       lab.webp
+|       logo.png
+|       photu.png
+|       quizimg.jpg
+|       react.svg
+|       redteam.webp
+|       video.mp4
+|       
++---authentication
+|   |   IndexAuth.jsx
+|   |   
+|   +---forgot
+|   |       forgot.css
+|   |       forgot.jsx
+|   |       
+|   +---login
+|   |       login.css
+|   |       login.jsx
+|   |       
+|   +---re-mail
+|   |       re-mail.jsx
+|   |       
+|   +---resetPassword
+|   |       resetPassword.jsx
+|   |       
+|   \---signup
+|           signup.css
+|           signup.jsx
+|           
++---Components
+|   +---common
+|   \---Modals
++---Layouts
+|   |   IndexLayout.jsx
+|   |   
+|   +---Header
+|   |       header.css
+|   |       header.jsx
+|   |       
+|   \---Sidebar
+|           sidebar.css
+|           sidebar.jsx
+|           
++---Pages
+|   +---Dasboard
+|   |       dashboard.css
+|   |       dashboard.jsx
+|   |       
+|   \---IndexPage
+|           indexPage.css
+|           indexPage.jsx
+|           
++---Routes
+|       MainRoutes.jsx
+|       
+\---services
+        api.js
+        firebase.js
+        
