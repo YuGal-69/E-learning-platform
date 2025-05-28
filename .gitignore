@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+   .gitignore
+        .vite/
+        README.md
+        node_modules/
+=======
 # Logs
 logs
 *.log
@@ -23,3 +29,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+>>>>>>> 84fecd59ca1e07a943810e43d2d99a7e0a64bcda
