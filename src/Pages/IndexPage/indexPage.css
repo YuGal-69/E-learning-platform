@@ -1,0 +1,65 @@
+.cyber-heading {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 3rem;
+  text-shadow: 0 0 10px #00ffea;
+  animation: flicker 3s infinite alternate;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; text-shadow: 0 0 10px #00ffea; }
+  50% { opacity: 0.6; text-shadow: 0 0 5px #00ffea; }
+}
+
+.glow-btn {
+  background: transparent;
+  border: 2px solid #00ffea;
+  color: #00ffea;
+  transition: 0.3s ease-in-out;
+}
+
+.glow-btn:hover {
+  background: #00ffea;
+  color: #0b121f;
+  box-shadow: 0 0 10px #00ffea, 0 0 20px #00ffea;
+  transform: scale(1.05);
+}
+
+.glassmorphic-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.lab-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #00ffea;
+  transition: 0.3s;
+}
+.lab-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px #00ffea;
+}
+.text-cyan {
+  color: #00ffea;
+}
+.progress-container {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #8db1ff;
+  backdrop-filter: blur(6px);
+}
+.scrolling-text {
+            overflow: hidden;
+            white-space: nowrap;
+          }
+          .scrolling-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll-left 25s linear infinite;
+          }
+          @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+          }
