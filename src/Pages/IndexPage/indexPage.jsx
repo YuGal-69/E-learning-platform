@@ -6,59 +6,9 @@ import '../IndexPage/indexPage.css';
 const indexPage = () => {
   return (
     <>
-      <header className="header-wrapper">
-        <nav className="navbar navbar-expand-lg p-0 m-0 fixed-top" style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}>
-          <div className="container-fluid">
-            <a className="navbar-brand ms-2" href="#">
-              <img
-                src="images/logo.png"
-                className="img-fluid"
-                alt="CyberNinja Logo"
-                style={{ maxWidth: '70px' }}
-              />
-              <span className="text-white">Cyber</span>
-              <span className="text-danger">Ninja</span>
-            </a>
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              <i className="fa-solid fa-bars-staggered"></i>
-            </button>
-            <div className="collapse navbar-collapse justify-content-evenly" id="navbarSupportedContent">
-              <ul className="navbar-nav mr-auto">
-                <li className="nav-item me-4">
-                  <a className="nav-link" href="#learn-section">Learn</a>
-                </li>
-                <li className="nav-item me-4">
-                  <a className="nav-link" href="#">Compete</a>
-                </li>
-                <li className="nav-item me-4">
-                  <a className="nav-link" href="#">For Education</a>
-                </li>
-                <li className="nav-item me-4">
-                  <a className="nav-link" href="#">For Business</a>
-                </li>
-                <li className="nav-item me-4">
-                  <a className="nav-link" href="pricing">Pricing</a>
-                </li>
-              </ul>
-              <ul className="navbar-nav m-auto">
-                <li className="nav-item">
-                  <a className="nav-link me-4" href="login">Login</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#">Join for FREE</a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
+
+
+      <main>
 
         <div style={{ height: '95vh', backgroundColor: '#0b121f' }} className="position-relative overflow-hidden hero-section">
           <video
@@ -91,9 +41,6 @@ const indexPage = () => {
             </div>
           </div>
         </div>
-      </header>
-
-      <main>
         {/* Testimonials Section */}
         <section id="testimonials" className="py-5" style={{ backgroundColor: '#0d1524', color: 'white' }}>
           <div className="container text-center">

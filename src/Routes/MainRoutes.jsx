@@ -8,51 +8,40 @@ import Forgot from "../authentication/forgot/forgot";
 import ResetPassword from "../authentication/resetPassword/resetPassword";
 import ReMail from "../authentication/re-mail/re-mail";
 
+import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
+import PublicLayout from '../Layouts/PublicLayout'; // Header only
 
-// IndexPage Components
+// Pages
 import IndexPage from "../Pages/IndexPage/indexPage";
 import Dashboard from "../Pages/Dasboard/dashboard";
 
-
-
 const router = createBrowserRouter([
-    // Authentication Routes
   {
-    path: '/login',
-    element: <Login />,
+    element: <PublicLayout />, // Public layout with header only
+    children: [
+      { path: '/', element: <IndexPage /> },
+      { path: '/login', element: <Login /> },
+      { path: '/signup', element: <Signup /> },
+      { path: '/forgot', element: <Forgot /> },
+      { path: '/resetpassword', element: <ResetPassword /> },
+      { path: '/re-mail', element: <ReMail /> },
+    ],
   },
   {
-    path: "/signup",
-    element: <Signup />,
+    element: <IndexLayout />, // Authenticated layout with header + sidebar
+    children: [
+      { path: '/dashboard', element: <Dashboard /> },
+      // Add more protected routes here
+    ],
   },
   {
-    path: "/forgot",
-    element: <Forgot />,
-  },
-  {
-    path: "/resetpassword",
-    element: <ResetPassword />,
-  },
-  {
-    path: "/re-mail",
-    element: <ReMail />,
-  },
-
-//   IndexPage Routes
-  {
-    path: "*",
-    element: <IndexPage />,
-  },
-  {
-    path: "/dashboard",
-    element: <Dashboard />,
+    path: '*',
+    element: <div>404 Page Not Found</div>,
   }
-
 ]);
-
 
 const MainRoutes = () => {
   return <RouterProvider router={router} />;
 }
 
-export default MainRoutes
+export default MainRoutes;

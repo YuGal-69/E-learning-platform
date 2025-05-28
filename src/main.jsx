@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import MainRoutes from './Routes/MainRoutes.jsx';
+import App from './App'; // ✅ Use App here instead of MainRoutes directly
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <MainRoutes />
+    <App />
   </React.StrictMode>
 );
