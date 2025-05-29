@@ -10,6 +10,7 @@
   50% { opacity: 0.6; text-shadow: 0 0 5px #00ffea; }
 }
 
+
 .glow-btn {
   background: transparent;
   border: 2px solid #00ffea;
@@ -17,6 +18,9 @@
   transition: 0.3s ease-in-out;
 }
 
+a {
+  text-decoration: none;
+}
 .glow-btn:hover {
   background: #00ffea;
   color: #0b121f;

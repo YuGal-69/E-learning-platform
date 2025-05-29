@@ -7,6 +7,7 @@ import Signup from "../authentication/signup/signup";
 import Forgot from "../authentication/forgot/forgot";
 import ResetPassword from "../authentication/resetPassword/resetPassword";
 import ReMail from "../authentication/re-mail/re-mail";
+import PrivateRoute from "../authentication/PrivateRoute";
 
 import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
 import PublicLayout from '../Layouts/PublicLayout'; // Header only
@@ -28,12 +29,19 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <IndexLayout />, // Authenticated layout with header + sidebar
-    children: [
-      { path: '/dashboard', element: <Dashboard /> },
-      // Add more protected routes here
-    ],
-  },
+  element: <IndexLayout />,
+  children: [
+    {
+      path: '/dashboard',
+      element: (
+        <PrivateRoute>
+          <Dashboard />
+        </PrivateRoute>
+      )
+    },
+    // other protected routes
+  ],
+},
   {
     path: '*',
     element: <div>404 Page Not Found</div>,

@@ -5,6 +5,7 @@ import '../IndexPage/indexPage.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { motion } from 'framer-motion';
+import Button from '../../Components/common/Button';
 
 const IndexPage = () => {
   useEffect(() => {
@@ -48,8 +49,14 @@ const IndexPage = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <a href="#" className="main-btn me-3 glow-btn">Train your team</a>
-                  <a href="signup" className="main-btn fill-btn glow-btn">Join for FREE</a>
+                  
+                  <div>
+                    <Button className="main-btn me-3 glow-btn" onClick={() => navigator() }>Train your team</Button>
+                    <Button className="main-btn fill-btn glow-btn">
+                      Join for FREE
+                    </Button>
+                  </div>
+                  
                 </motion.div>
               </div>
             </div>
