@@ -1,15 +1,14 @@
-// src/Layouts/Sidebar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './Sidebar.css';
+import './SideBar.css';
 
-const Sidebar = () => (
-  <aside className="sidebar">
+const SideBar = () => (
+  <div className="sidebar">
     <ul>
-      <li><Link to="/dashboard">Dashboard</Link></li>
-      <li><Link to="/profile">Profile</Link></li>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li><a href="/learn">Learn</a></li>
+      <li><a href="/challenges">Challenges</a></li>
     </ul>
-  </aside>
+  </div>
 );
 
-export default Sidebar;
+export default SideBar;
