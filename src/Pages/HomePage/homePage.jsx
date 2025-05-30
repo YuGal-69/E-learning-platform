@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../IndexPage/indexPage.css';
+import '../HomePage/homePage.css';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { motion } from 'framer-motion';
 import Button from '../../Components/common/Button';
 
-const IndexPage = () => {
+const HomePage = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     AOS.init({ duration: 1200 });
   }, []);
@@ -49,14 +52,14 @@ const IndexPage = () => {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  
                   <div>
-                    <Button className="main-btn me-3 glow-btn" onClick={() => navigator() }>Train your team</Button>
-                    <Button className="main-btn fill-btn glow-btn">
+                    <Button className="main-btn me-3 glow-btn" onClick={() => navigate('/train')}>
+                      Train your team
+                    </Button>
+                    <Button className="main-btn fill-btn glow-btn" onClick={() => navigate('/signup')}>
                       Join for FREE
                     </Button>
                   </div>
-                  
                 </motion.div>
               </div>
             </div>
@@ -154,7 +157,7 @@ const IndexPage = () => {
           </div>
         </section>
 
-        {/* Smooth Scrolling Ticker */}
+        {/* Scrolling Ticker */}
         <section className="ticker bg-dark text-cyan py-2" style={{ borderTop: '1px solid #00ffea', borderBottom: '1px solid #00ffea' }}>
           <div className="scrolling-text">
             <div className="scrolling-content">
@@ -162,11 +165,9 @@ const IndexPage = () => {
             </div>
           </div>
         </section>
-
-    
       </main>
     </>
   );
 };
 
-export default IndexPage;
+export default HomePage;

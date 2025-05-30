@@ -13,14 +13,14 @@ import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
 import PublicLayout from '../Layouts/PublicLayout'; // Header only
 
 // Pages
-import IndexPage from "../Pages/IndexPage/indexPage";
+import HomePage from "../Pages/HomePage/homePage";
 import Dashboard from "../Pages/Dasboard/dashboard";
 
 const router = createBrowserRouter([
   {
     element: <PublicLayout />, // Public layout with header only
     children: [
-      { path: '/', element: <IndexPage /> },
+      { path: '/', element: <HomePage /> },
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <Signup /> },
       { path: '/forgot', element: <Forgot /> },
