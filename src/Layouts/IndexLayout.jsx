@@ -7,12 +7,7 @@ import './Layout.css'; // Add your CSS path here
 const IndexLayout = () => (
   <div className="layout-container">
     <Header />
-    <div className="layout-body">
-      <Sidebar className="sidebar" />
-      <div className="content-container">
-        <Outlet />
-      </div>
-    </div>
+    <Outlet />
   </div>
 );
 

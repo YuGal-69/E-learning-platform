@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebase"; // Adjust path as needed
+import "./login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,9 +23,9 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <div className="row align-items-center justify-content-center">
-        <div className="col-md-6 col-11 card p-4" style={{ marginTop: "10%" }}>
+    <div className="container-fluid">
+      <div className="row align-items-center justify-content-center card1 ">
+        <div className="col-md-6 col-11 card p-4">
           <div className="h2 text-center mb-4">Login</div>
           <form className="row g-3" onSubmit={handleLogin}>
             <div className="col-12">

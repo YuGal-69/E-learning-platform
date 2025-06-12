@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 const PublicLayout = () => (
   <>
     <Header />
-    <main style={{ paddingTop: '80px' }}>
+    <main>
       <Outlet />
     </main>
 
