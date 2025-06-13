@@ -1,24 +1,35 @@
-import React from 'react';
+import React from "react";
+import "./Button.css";
 
-const Button = ({ children, onClick, type = 'button', className = '', style = {} }) => {
-  const baseStyle = {
-    background: 'transparent',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    fontSize: '16px',
-    transition: 'background 0.3s',
-  };
-
-  const mergedStyle = { ...baseStyle, ...style };
+const Button = ({
+  children,
+  type = "button",
+  variant = "primary",
+  size = "md",
+  fullWidth = false,
+  disabled = false,
+  className = "",
+  onClick,
+  ...props
+}) => {
+  const buttonClasses = [
+    "button",
+    `button-${variant}`,
+    `button-${size}`,
+    fullWidth ? "button-full-width" : "",
+    disabled ? "button-disabled" : "",
+    className,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <button 
+    <button
       type={type}
+      className={buttonClasses}
+      disabled={disabled}
       onClick={onClick}
-      className={className}
-      style={mergedStyle}
+      {...props}
     >
       {children}
     </button>

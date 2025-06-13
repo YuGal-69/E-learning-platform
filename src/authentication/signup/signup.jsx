@@ -40,9 +40,9 @@ const Signup = () => {
   };
 
   return (
-    <div className="container">
-      <div className="row align-items-center justify-content-center">
-        <div className="col-md-6 col-11 card p-4" style={{ marginTop: "10%" }}>
+    <div className="container-fluid">
+      <div className="row align-items-center justify-content-center card1">
+        <div className="col-md-6 col-11 card p-4" >
           <div className="h2 text-center mb-4">Signup</div>
           <form className="row g-3" onSubmit={handleSignup}>
             <div className="col-12">
