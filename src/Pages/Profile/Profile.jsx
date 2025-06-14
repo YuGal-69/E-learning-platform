@@ -14,6 +14,7 @@ import {
   X,
   Upload,
   Camera,
+  Shield,
 } from "lucide-react";
 import { storage } from "../../services/firebase";
 import {
@@ -24,13 +25,15 @@ import {
 } from "firebase/storage";
 import imageCompression from "browser-image-compression";
 import "./Profile.css";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const { userProfile, updateUserProfile } = useUser();
+  const { userProfile, updateUserProfile, isAdmin } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     displayName: userProfile?.displayName || "",
     bio: userProfile?.bio || "",
@@ -164,6 +167,23 @@ const Profile = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleToggleAdmin = async () => {
+    try {
+      setLoading(true);
+      await updateUserProfile({
+        role: isAdmin ? "student" : "admin",
+      });
+    } catch (error) {
+      console.error("Error toggling admin role:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAdminPanelClick = () => {
+    navigate("/admin/login");
   };
 
   if (!userProfile) {
@@ -370,6 +390,31 @@ const Profile = () => {
             )}
           </div>
         </Card>
+
+        {/* Admin Role Toggle (Development Only) */}
+        {process.env.NODE_ENV === "development" && (
+          <div className="admin-toggle">
+            <Button
+              onClick={handleToggleAdmin}
+              disabled={loading}
+              className={`admin-button ${isAdmin ? "active" : ""}`}
+            >
+              <Shield size={18} />
+              {isAdmin ? "Remove Admin Role" : "Make Admin"}
+            </Button>
+          </div>
+        )}
+
+        {/* Admin Panel Link - Updated to always go through admin login */}
+        <div className="admin-panel-link">
+          <Button
+            onClick={handleAdminPanelClick}
+            className="admin-panel-button"
+          >
+            <Shield size={18} />
+            Access Admin Panel
+          </Button>
+        </div>
       </div>
     </div>
   );

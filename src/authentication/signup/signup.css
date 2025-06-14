@@ -79,6 +79,12 @@
   font-size: var(--font-size-sm);
 }
 
+.auth-error .icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .auth-form {
   display: flex;
   flex-direction: column;
@@ -252,6 +258,20 @@
 .social-button .icon {
   width: 20px;
   height: 20px;
+}
+
+.google-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #4285f4;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .auth-footer {

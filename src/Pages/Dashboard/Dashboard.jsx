@@ -1,12 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { Shield, Trophy, Target, Brain, Zap, Users, BookOpen, Award, TrendingUp, Clock, Star, Lock } from 'lucide-react';
-import Card from '../../components/common/Card';
-import Progress from '../../components/common/Progress';
-import Button from '../../components/common/Button';
-import { useUser } from '../../context/UserContext';
-import { ref, get } from 'firebase/database';
-import { db } from '../../services/firebase';
-import './Dashboard.css';
+import React, { useState, useEffect } from "react";
+import {
+  Shield,
+  Trophy,
+  Target,
+  Brain,
+  Zap,
+  Users,
+  BookOpen,
+  Award,
+  TrendingUp,
+  Clock,
+  Star,
+  Lock,
+} from "lucide-react";
+import Card from "../../components/common/Card";
+import Progress from "../../components/common/Progress";
+import Button from "../../components/common/Button";
+import { useUser } from "../../context/UserContext";
+import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { db } from "../../services/firebase";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const { userProfile } = useUser();
@@ -21,7 +34,7 @@ const Dashboard = () => {
       timeEstimate: "20 min",
       category: "Web Security",
       completed: false,
-      locked: false
+      locked: false,
     },
     {
       id: 2,
@@ -31,7 +44,7 @@ const Dashboard = () => {
       timeEstimate: "45 min",
       category: "Cryptography",
       completed: false,
-      locked: false
+      locked: false,
     },
     {
       id: 3,
@@ -41,7 +54,7 @@ const Dashboard = () => {
       timeEstimate: "15 min",
       category: "Network Security",
       completed: true,
-      locked: false
+      locked: false,
     },
     {
       id: 4,
@@ -51,14 +64,14 @@ const Dashboard = () => {
       timeEstimate: "90 min",
       category: "Malware",
       completed: false,
-      locked: true
-    }
+      locked: true,
+    },
   ]);
 
   // Static top users as role models
   const staticTopUsers = [
     {
-      uid: 'top1',
+      uid: "top1",
       name: "Sarah Kim",
       xp: 4520,
       level: 18,
@@ -66,10 +79,10 @@ const Dashboard = () => {
       streak: 30,
       rank: 1,
       isStatic: true,
-      title: "Security Master"
+      title: "Security Master",
     },
     {
-      uid: 'top2',
+      uid: "top2",
       name: "Mike Johnson",
       xp: 3890,
       level: 16,
@@ -77,10 +90,10 @@ const Dashboard = () => {
       streak: 25,
       rank: 2,
       isStatic: true,
-      title: "Network Ninja"
+      title: "Network Ninja",
     },
     {
-      uid: 'top3',
+      uid: "top3",
       name: "Alex Chen",
       xp: 3450,
       level: 15,
@@ -88,10 +101,10 @@ const Dashboard = () => {
       streak: 20,
       rank: 3,
       isStatic: true,
-      title: "Code Guardian"
+      title: "Code Guardian",
     },
     {
-      uid: 'top4',
+      uid: "top4",
       name: "Emma Davis",
       xp: 3100,
       level: 14,
@@ -99,10 +112,10 @@ const Dashboard = () => {
       streak: 18,
       rank: 4,
       isStatic: true,
-      title: "Bug Hunter"
+      title: "Bug Hunter",
     },
     {
-      uid: 'top5',
+      uid: "top5",
       name: "Chris Lee",
       xp: 2950,
       level: 13,
@@ -110,34 +123,42 @@ const Dashboard = () => {
       streak: 15,
       rank: 5,
       isStatic: true,
-      title: "Security Enthusiast"
-    }
+      title: "Security Enthusiast",
+    },
   ];
 
   useEffect(() => {
-    const fetchUserPosition = async () => {
-      if (!userProfile?.uid) {
+    const fetchUserRank = async () => {
+      if (!userProfile) {
         setLoading(false);
         return;
       }
 
       try {
-        const usersRef = ref(db, 'users');
-        const snapshot = await get(usersRef);
-        
-        if (snapshot.exists()) {
-          const usersData = snapshot.val();
+        const usersRef = collection(db, "users");
+        const usersQuery = query(
+          usersRef,
+          orderBy("challengesCompleted", "desc")
+        );
+        const snapshot = await getDocs(usersQuery);
+
+        if (!snapshot.empty) {
+          const usersData = snapshot.docs.map((doc) => ({
+            uid: doc.id,
+            ...doc.data(),
+          }));
+
           // Get all real users and sort them
-          const allUsers = Object.entries(usersData)
-            .filter(([uid]) => uid !== userProfile.uid) // Exclude current user from allUsers
-            .map(([uid, user]) => ({
-              uid,
-              name: user.displayName || user.email.split('@')[0],
+          const allUsers = usersData
+            .filter((user) => user.uid !== userProfile.uid) // Exclude current user
+            .map((user) => ({
+              uid: user.uid,
+              name: user.displayName || user.email.split("@")[0],
               xp: user.xp || 0,
               level: user.level || 1,
               challengesCompleted: user.challengesCompleted || 0,
               streak: user.streak || 0,
-              rank: 0
+              rank: 0,
             }))
             .sort((a, b) => {
               if (b.challengesCompleted !== a.challengesCompleted) {
@@ -147,60 +168,60 @@ const Dashboard = () => {
             })
             .map((user, index) => ({
               ...user,
-              rank: index + 1
+              rank: index + 1,
             }));
 
           // Create current user object
           const currentUser = {
             uid: userProfile.uid,
-            name: userProfile.displayName || userProfile.email.split('@')[0],
+            name: userProfile.displayName || userProfile.email.split("@")[0],
             xp: userProfile.xp || 0,
             level: userProfile.level || 1,
             challengesCompleted: userProfile.challengesCompleted || 0,
             streak: userProfile.streak || 0,
-            rank: 0
+            rank: 0,
           };
 
           // Calculate overall rank including static users
           let overallRank = 1;
           for (const staticUser of staticTopUsers) {
-            if (currentUser.challengesCompleted < staticUser.challengesCompleted ||
-                (currentUser.challengesCompleted === staticUser.challengesCompleted && 
-                 currentUser.xp < staticUser.xp)) {
+            if (
+              currentUser.challengesCompleted <
+                staticUser.challengesCompleted ||
+              (currentUser.challengesCompleted ===
+                staticUser.challengesCompleted &&
+                currentUser.xp < staticUser.xp)
+            ) {
               overallRank++;
             }
           }
 
-          // Add real users to rank calculation
-          for (const user of allUsers) {
-            if (currentUser.challengesCompleted < user.challengesCompleted ||
-                (currentUser.challengesCompleted === user.challengesCompleted && 
-                 currentUser.xp < user.xp)) {
-              overallRank++;
-            }
+          // Find current user's position in the real users list
+          const currentUserPosition = allUsers.findIndex(
+            (user) => user.uid === userProfile.uid
+          );
+          if (currentUserPosition !== -1) {
+            overallRank += currentUserPosition;
           }
 
-          setCurrentUserPosition({
-            ...currentUser,
-            overallRank
-          });
+          setCurrentUserPosition(overallRank);
         }
       } catch (error) {
-        console.error('Error fetching user position:', error);
+        console.error("Error fetching user rank:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUserPosition();
+    fetchUserRank();
   }, [userProfile]);
 
   const getDifficultyColor = (difficulty) => {
     const colors = {
-      Easy: 'var(--color-primary)',
-      Medium: 'var(--color-warning)',
-      Hard: 'var(--color-accent)',
-      Expert: '#ff4d4d'
+      Easy: "var(--color-primary)",
+      Medium: "var(--color-warning)",
+      Hard: "var(--color-accent)",
+      Expert: "#ff4d4d",
     };
     return colors[difficulty] || colors.Medium;
   };
@@ -215,9 +236,9 @@ const Dashboard = () => {
   }
 
   // Get first name from displayName or email
-  const firstName = userProfile.displayName 
-    ? userProfile.displayName.split(' ')[0] 
-    : userProfile.email.split('@')[0];
+  const firstName = userProfile.displayName
+    ? userProfile.displayName.split(" ")[0]
+    : userProfile.email.split("@")[0];
 
   return (
     <div className="dashboard">
@@ -257,7 +278,9 @@ const Dashboard = () => {
               <div className="stat-content">
                 <div className="stat-info">
                   <p className="stat-label">Challenges</p>
-                  <h3 className="stat-value">{userProfile.challengesCompleted || 0}</h3>
+                  <h3 className="stat-value">
+                    {userProfile.challengesCompleted || 0}
+                  </h3>
                   <span className="stat-subtext">Completed</span>
                 </div>
                 <Target className="stat-icon" />
@@ -283,7 +306,9 @@ const Dashboard = () => {
               <div className="stat-content">
                 <div className="stat-info">
                   <p className="stat-label">Badges</p>
-                  <h3 className="stat-value">{(userProfile.badges || []).length}</h3>
+                  <h3 className="stat-value">
+                    {(userProfile.badges || []).length}
+                  </h3>
                   <span className="stat-subtext">Earned</span>
                 </div>
                 <Award className="stat-icon" />
@@ -299,8 +324,12 @@ const Dashboard = () => {
             <Card variant="elevated" className="section-card">
               <Card.Header>
                 <div className="section-header">
-                  <h3><Brain className="icon" /> Active Challenges</h3>
-                  <Button variant="ghost" size="sm">View All</Button>
+                  <h3>
+                    <Brain className="icon" /> Active Challenges
+                  </h3>
+                  <Button variant="ghost" size="sm">
+                    View All
+                  </Button>
                 </div>
               </Card.Header>
               <Card.Body>
@@ -309,34 +338,58 @@ const Dashboard = () => {
                     <Card
                       key={challenge.id}
                       variant="default"
-                      className={`challenge-card ${challenge.completed ? 'completed' : challenge.locked ? 'locked' : ''}`}
+                      className={`challenge-card ${
+                        challenge.completed
+                          ? "completed"
+                          : challenge.locked
+                          ? "locked"
+                          : ""
+                      }`}
                       hoverable={!challenge.locked}
                     >
                       <Card.Body>
                         <div className="challenge-content">
                           <div className="challenge-info">
                             <h4>
-                              {challenge.locked && <Lock className="icon small" />}
+                              {challenge.locked && (
+                                <Lock className="icon small" />
+                              )}
                               {challenge.title}
                             </h4>
                             <div
                               className="difficulty-badge"
-                              style={{ backgroundColor: getDifficultyColor(challenge.difficulty) }}
+                              style={{
+                                backgroundColor: getDifficultyColor(
+                                  challenge.difficulty
+                                ),
+                              }}
                             >
                               {challenge.difficulty}
                             </div>
                             <div className="challenge-meta">
-                              <span><Trophy className="icon tiny" /> {challenge.xp} XP</span>
-                              <span><Clock className="icon tiny" /> {challenge.timeEstimate}</span>
-                              <span className="category">{challenge.category}</span>
+                              <span>
+                                <Trophy className="icon tiny" /> {challenge.xp}{" "}
+                                XP
+                              </span>
+                              <span>
+                                <Clock className="icon tiny" />{" "}
+                                {challenge.timeEstimate}
+                              </span>
+                              <span className="category">
+                                {challenge.category}
+                              </span>
                             </div>
                           </div>
                           <Button
-                            variant={challenge.completed ? 'ghost' : 'primary'}
+                            variant={challenge.completed ? "ghost" : "primary"}
                             size="sm"
                             disabled={challenge.locked}
                           >
-                            {challenge.completed ? 'Completed' : challenge.locked ? 'Locked' : 'Start'}
+                            {challenge.completed
+                              ? "Completed"
+                              : challenge.locked
+                              ? "Locked"
+                              : "Start"}
                           </Button>
                         </div>
                       </Card.Body>
@@ -347,21 +400,17 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          
           <div className="dashboard-leaderboard">
             {/* Leaderboard */}
             <Card variant="elevated" className="leaderboard-card">
               <Card.Header>
                 <div className="section-header">
-                  <h3><TrendingUp className="icon" /> Leaderboard</h3>
+                  <h3>
+                    <TrendingUp className="icon" /> Leaderboard
+                  </h3>
                   {currentUserPosition && (
                     <span className="user-rank">
-                      Your Rank: #{currentUserPosition.overallRank}
-                      {currentUserPosition.challengesCompleted > 0 && (
-                        <span className="user-stats">
-                          ({currentUserPosition.challengesCompleted} Challenges)
-                        </span>
-                      )}
+                      Your Rank: #{currentUserPosition}
                     </span>
                   )}
                 </div>
@@ -387,7 +436,9 @@ const Dashboard = () => {
                             <span className="player-title">{player.title}</span>
                           </div>
                           <div className="player-stats">
-                            <span className="player-level">Level {player.level}</span>
+                            <span className="player-level">
+                              Level {player.level}
+                            </span>
                             <span className="player-challenges">
                               {player.challengesCompleted} Challenges
                             </span>
@@ -404,40 +455,49 @@ const Dashboard = () => {
                     ))}
 
                     {/* Current User Position */}
-                    {currentUserPosition && !staticTopUsers.some(user => user.uid === currentUserPosition.uid) && (
-                      <>
-                        <div className="leaderboard-divider">
-                          <span>Your Position</span>
-                        </div>
-                        <div className="leaderboard-entry current-user">
-                          <div className="rank-badge">{currentUserPosition.overallRank}</div>
-                          <div className="player-info">
-                            <div className="player-name-container">
-                              <p className="player-name">
-                                {currentUserPosition.name}
-                                <span className="you-badge">You</span>
-                              </p>
-                              <span className="player-title">
-                                {currentUserPosition.challengesCompleted > 0 ? 'Rising Star' : 'New Challenger'}
-                              </span>
+                    {currentUserPosition &&
+                      !staticTopUsers.some(
+                        (user) => user.rank === currentUserPosition
+                      ) && (
+                        <>
+                          <div className="leaderboard-divider">
+                            <span>Your Position</span>
+                          </div>
+                          <div className="leaderboard-entry current-user">
+                            <div className="rank-badge">
+                              {currentUserPosition}
                             </div>
-                            <div className="player-stats">
-                              <span className="player-level">Level {currentUserPosition.level}</span>
-                              <span className="player-challenges">
-                                {currentUserPosition.challengesCompleted} Challenges
-                              </span>
-                              <span className="player-streak">
-                                {currentUserPosition.streak} Day Streak
-                              </span>
+                            <div className="player-info">
+                              <div className="player-name-container">
+                                <p className="player-name">
+                                  {userProfile.name}
+                                  <span className="you-badge">You</span>
+                                </p>
+                                <span className="player-title">
+                                  {userProfile.challengesCompleted > 0
+                                    ? "Rising Star"
+                                    : "New Challenger"}
+                                </span>
+                              </div>
+                              <div className="player-stats">
+                                <span className="player-level">
+                                  Level {userProfile.level}
+                                </span>
+                                <span className="player-challenges">
+                                  {userProfile.challengesCompleted} Challenges
+                                </span>
+                                <span className="player-streak">
+                                  {userProfile.streak} Day Streak
+                                </span>
+                              </div>
+                            </div>
+                            <div className="player-xp">
+                              <p>{userProfile.xp.toLocaleString()}</p>
+                              <span>XP</span>
                             </div>
                           </div>
-                          <div className="player-xp">
-                            <p>{currentUserPosition.xp.toLocaleString()}</p>
-                            <span>XP</span>
-                          </div>
-                        </div>
-                      </>
-                    )}
+                        </>
+                      )}
                   </div>
                 )}
               </Card.Body>
@@ -450,13 +510,25 @@ const Dashboard = () => {
               </Card.Header>
               <Card.Body>
                 <div className="quick-actions">
-                  <Button variant="ghost" fullWidth icon={<BookOpen className="icon" />}>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    icon={<BookOpen className="icon" />}
+                  >
                     Study Materials
                   </Button>
-                  <Button variant="ghost" fullWidth icon={<Users className="icon" />}>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    icon={<Users className="icon" />}
+                  >
                     Join Community
                   </Button>
-                  <Button variant="ghost" fullWidth icon={<Star className="icon" />}>
+                  <Button
+                    variant="ghost"
+                    fullWidth
+                    icon={<Star className="icon" />}
+                  >
                     Practice Lab
                   </Button>
                 </div>
@@ -469,4 +541,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

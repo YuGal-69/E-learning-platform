@@ -418,3 +418,50 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.admin-toggle {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.admin-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+}
+
+.admin-button:hover {
+  background-color: var(--background-hover);
+}
+
+.admin-button.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.admin-panel-link {
+  margin-top: 1rem;
+}
+
+.admin-panel-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--accent-color);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.admin-panel-button:hover {
+  background-color: var(--accent-color-hover);
+  transform: translateY(-1px);
+}

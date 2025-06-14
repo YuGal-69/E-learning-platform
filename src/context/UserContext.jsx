@@ -1,12 +1,20 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { auth, db } from "../services/firebase";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
-import { ref, set, get, onValue, update } from "firebase/database";
+import { doc, getDoc, setDoc, updateDoc, onSnapshot } from "firebase/firestore";
 
 const UserContext = createContext();
 
@@ -20,96 +28,117 @@ export const useUser = () => {
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [userProfile, setUserProfile] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
+  // Handle online/offline state
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      setLoading(true);
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
 
-      if (user) {
-        // Get user profile from Realtime Database
-        const userRef = ref(db, `users/${user.uid}`);
-        try {
-          const snapshot = await get(userRef);
-          if (snapshot.exists()) {
-            const profileData = snapshot.val();
-            // Ensure badges field exists
-            setUserProfile({
-              ...profileData,
-              badges: profileData.badges || [],
-              preferences: {
-                theme: "light",
-                notifications: true,
-                emailUpdates: true,
-                ...profileData.preferences,
-              },
-            });
-          } else {
-            // Create initial user profile if it doesn't exist
-            const initialProfile = {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName || "",
-              photoURL: user.photoURL || "",
-              bio: "",
-              level: 1,
-              xp: 0,
-              challengesCompleted: 0,
-              streak: 0,
-              badges: [],
-              preferences: {
-                theme: "light",
-                notifications: true,
-                emailUpdates: true,
-              },
-              createdAt: new Date().toISOString(),
-              lastLogin: new Date().toISOString(),
-            };
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
 
-            await set(userRef, initialProfile);
-            setUserProfile(initialProfile);
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      } else {
-        setUserProfile(null);
-      }
-
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
   }, []);
 
-  const updateUserProfile = async (updates) => {
-    if (!user) return;
+  // Auth state listener with cleanup
+  useEffect(() => {
+    let unsubscribeAuth;
+    let unsubscribeProfile;
 
+    const setupAuth = async () => {
+      try {
+        unsubscribeAuth = onAuthStateChanged(auth, async (user) => {
+          setUser(user);
+          setIsLoading(true);
+          setError(null);
+
+          if (user) {
+            try {
+              const userDocRef = doc(db, "users", user.uid);
+
+              // Use real-time listener for user profile
+              unsubscribeProfile = onSnapshot(
+                userDocRef,
+                (doc) => {
+                  if (doc.exists()) {
+                    const profileData = doc.data();
+                    setUserProfile(profileData);
+                    setIsAdmin(profileData.role === "admin");
+                  } else if (isOnline) {
+                    // Create new profile if it doesn't exist
+                    const newProfile = {
+                      uid: user.uid,
+                      email: user.email,
+                      username: user.displayName || user.email.split("@")[0],
+                      role: "student",
+                      createdAt: new Date(),
+                      lastLogin: new Date(),
+                      xp: 0,
+                      level: 1,
+                      challengesCompleted: 0,
+                      streak: 0,
+                      enrolledCourses: [],
+                      completedChallenges: [],
+                      progress: {},
+                    };
+
+                    setDoc(userDocRef, newProfile).catch((error) => {
+                      console.error("Error creating user profile:", error);
+                      setError(
+                        "Failed to create user profile. Please try again when online."
+                      );
+                    });
+                  } else {
+                    setError(
+                      "Cannot create new profile while offline. Please connect to the internet."
+                    );
+                  }
+                  setIsLoading(false);
+                },
+                (error) => {
+                  console.error("Error in profile listener:", error);
+                  setError("Error loading profile. Please try again.");
+                  setIsLoading(false);
+                }
+              );
+            } catch (error) {
+              console.error("Error setting up profile listener:", error);
+              setError("Error connecting to database. Please try again.");
+              setIsLoading(false);
+            }
+          } else {
+            setUserProfile(null);
+            setIsAdmin(false);
+            setIsLoading(false);
+          }
+        });
+      } catch (error) {
+        console.error("Error setting up auth:", error);
+        setError("Error initializing authentication. Please refresh the page.");
+        setIsLoading(false);
+      }
+    };
+
+    setupAuth();
+
+    return () => {
+      if (unsubscribeAuth) unsubscribeAuth();
+      if (unsubscribeProfile) unsubscribeProfile();
+    };
+  }, [isOnline]);
+
+  // Memoized login function
+  const login = useCallback(async (email, password) => {
     try {
-      const userRef = ref(db, `users/${user.uid}`);
-      await update(userRef, {
-        ...updates,
-        lastUpdated: new Date().toISOString(),
-      });
-
-      // Update local state
-      setUserProfile((prev) => ({
-        ...prev,
-        ...updates,
-        lastUpdated: new Date().toISOString(),
-      }));
-
-      return true;
-    } catch (error) {
-      console.error("Error updating user profile:", error);
-      return false;
-    }
-  };
-
-  const login = async (email, password) => {
-    try {
+      setError(null);
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
@@ -118,48 +147,158 @@ export const UserProvider = ({ children }) => {
       return userCredential.user;
     } catch (error) {
       console.error("Login error:", error);
+      let errorMessage = "An error occurred during login.";
+
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "No account found with this email.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Incorrect password.";
+          break;
+        case "auth/too-many-requests":
+          errorMessage = "Too many failed attempts. Please try again later.";
+          break;
+        case "auth/user-disabled":
+          errorMessage = "This account has been disabled.";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+
+      setError(errorMessage);
       throw error;
     }
-  };
+  }, []);
 
-  const register = async (email, password) => {
+  // Memoized register function
+  const register = useCallback(async (email, password, username) => {
     try {
+      setError(null);
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
-      return userCredential.user;
+      const user = userCredential.user;
+
+      await updateProfile(user, { displayName: username });
+
+      // Create user document in Firestore
+      const userDocRef = doc(db, "users", user.uid);
+      await setDoc(userDocRef, {
+        uid: user.uid,
+        email: user.email,
+        username: username,
+        role: "student",
+        createdAt: new Date(),
+        xp: 0,
+        level: 1,
+        challengesCompleted: 0,
+        streak: 0,
+        enrolledCourses: [],
+        completedChallenges: [],
+        progress: {},
+      });
+
+      return user;
     } catch (error) {
       console.error("Registration error:", error);
+      let errorMessage = "An error occurred during registration.";
+
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMessage = "An account with this email already exists.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Please enter a valid email address.";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Password should be at least 6 characters.";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+
+      setError(errorMessage);
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  // Memoized logout function
+  const logout = useCallback(async () => {
     try {
       await signOut(auth);
     } catch (error) {
       console.error("Logout error:", error);
-      throw error;
+      setError("Failed to log out. Please try again.");
     }
-  };
+  }, []);
 
-  const value = {
-    user,
-    userProfile,
-    loading,
-    login,
-    register,
-    logout,
-    updateUserProfile,
-  };
+  // Memoized update profile function
+  const updateUserProfile = useCallback(
+    async (updates) => {
+      if (!user || !db) return false;
 
-  return (
-    <UserContext.Provider value={value}>
-      {!loading && children}
-    </UserContext.Provider>
+      try {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          ...updates,
+          updatedAt: new Date(),
+        });
+
+        if (updates.role) {
+          setIsAdmin(updates.role === "admin");
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        setError("Failed to update profile. Please try again.");
+        return false;
+      }
+    },
+    [user, db]
   );
+
+  // Memoize context value to prevent unnecessary re-renders
+  const value = useMemo(
+    () => ({
+      user,
+      userProfile,
+      isLoading,
+      isAdmin,
+      error,
+      isOnline,
+      login,
+      register,
+      logout,
+      updateUserProfile,
+    }),
+    [
+      user,
+      userProfile,
+      isLoading,
+      isAdmin,
+      error,
+      isOnline,
+      login,
+      register,
+      logout,
+      updateUserProfile,
+    ]
+  );
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Loading user data...</p>
+      </div>
+    );
+  }
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export default UserContext;

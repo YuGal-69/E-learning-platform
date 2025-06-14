@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../services/firebase";
+import Button from "../../components/common/Button";
 import {
   LayoutDashboard,
   BookOpen,
@@ -139,56 +140,65 @@ const Header = () => {
             {!user ? (
               // Public menu items
               <>
-                <li className="nav-item">
-                  <div className="nav-link dropdown-toggle">
+                <li className="nav-item dropdown">
+                  <button
+                    className="nav-link dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     Learn <ChevronDown size={16} />
-                    <div className="dropdown-menu">
-                      {learnDropdownItems.map((item, index) => (
-                        <Link
-                          key={index}
-                          className="dropdown-item"
-                          to={item.path}
-                        >
+                  </button>
+                  <ul className="dropdown-menu">
+                    {learnDropdownItems.map((item, index) => (
+                      <li key={index}>
+                        <Link className="dropdown-item" to={item.path}>
                           {item.icon}
                           {item.label}
                         </Link>
-                      ))}
-                    </div>
-                  </div>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
-                <li className="nav-item">
-                  <div className="nav-link dropdown-toggle">
+                <li className="nav-item dropdown">
+                  <button
+                    className="nav-link dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     Education <ChevronDown size={16} />
-                    <div className="dropdown-menu">
-                      {educationDropdownItems.map((item, index) => (
-                        <Link
-                          key={index}
-                          className="dropdown-item"
-                          to={item.path}
-                        >
+                  </button>
+                  <ul className="dropdown-menu">
+                    {educationDropdownItems.map((item, index) => (
+                      <li key={index}>
+                        <Link className="dropdown-item" to={item.path}>
                           {item.icon}
                           {item.label}
                         </Link>
-                      ))}
-                    </div>
-                  </div>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
-                <li className="nav-item">
-                  <div className="nav-link dropdown-toggle">
+                <li className="nav-item dropdown">
+                  <button
+                    className="nav-link dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     Business <ChevronDown size={16} />
-                    <div className="dropdown-menu">
-                      {businessDropdownItems.map((item, index) => (
-                        <Link
-                          key={index}
-                          className="dropdown-item"
-                          to={item.path}
-                        >
+                  </button>
+                  <ul className="dropdown-menu">
+                    {businessDropdownItems.map((item, index) => (
+                      <li key={index}>
+                        <Link className="dropdown-item" to={item.path}>
                           {item.icon}
                           {item.label}
                         </Link>
-                      ))}
-                    </div>
-                  </div>
+                      </li>
+                    ))}
+                  </ul>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/pricing">
@@ -232,35 +242,41 @@ const Header = () => {
             {!user ? (
               // Login/Signup buttons
               <>
-                <li className="nav-item me-3">
-                  <Link className="nav-link auth-button login" to="/login">
-                    Login
+                <div className="d-flex gap-3">
+                  <Link to="/login">
+                    <Button variant="outline" size="md">
+                      Login
+                    </Button>
                   </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link auth-button signup" to="/signup">
-                    Join for FREE
+                  <Link to="/signup">
+                    <Button variant="danger" size="md">
+                      Join for FREE
+                    </Button>
                   </Link>
-                </li>
+                </div>
               </>
             ) : (
               // User menu
-              <li className="nav-item user-menu">
-                <div className="nav-link dropdown-toggle d-flex align-items-center">
+              <li className="nav-item dropdown">
+                <button
+                  className="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
                   <img
                     src={user.photoURL || "/default-avatar.png"}
-                    alt="User Avatar"
-                    className="user-avatar me-2"
+                    alt="User avatar"
+                    className="user-avatar"
                   />
-                  <span className="d-none d-lg-inline">
-                    {user.displayName || "User"}
-                  </span>
-                  <ChevronDown size={16} className="ms-1" />
-                  <div className="dropdown-menu">
-                    {userDropdownItems.map((item, index) =>
-                      item.onClick ? (
+                  <span>{user.displayName || "User"}</span>
+                  <ChevronDown size={16} />
+                </button>
+                <ul className="dropdown-menu dropdown-menu-end">
+                  {userDropdownItems.map((item, index) => (
+                    <li key={index}>
+                      {item.onClick ? (
                         <button
-                          key={index}
                           className="dropdown-item"
                           onClick={item.onClick}
                         >
@@ -268,18 +284,14 @@ const Header = () => {
                           {item.label}
                         </button>
                       ) : (
-                        <Link
-                          key={index}
-                          className="dropdown-item"
-                          to={item.path}
-                        >
+                        <Link className="dropdown-item" to={item.path}>
                           {item.icon}
                           {item.label}
                         </Link>
-                      )
-                    )}
-                  </div>
-                </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               </li>
             )}
           </ul>

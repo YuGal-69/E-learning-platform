@@ -132,7 +132,7 @@ const Login = () => {
                 />
                 <span>Remember me</span>
               </label>
-              <Link to="/forgot-password" className="forgot-password">
+              <Link to="/forgot" className="forgot-password">
                 Forgot password?
               </Link>
             </div>
@@ -166,7 +166,7 @@ const Login = () => {
               disabled={isLoading}
               className="social-button"
             >
-              <img src="/google-icon.svg" alt="Google" />
+              <span className="google-icon">G</span>
               Google
             </Button>
             <Button
