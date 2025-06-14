@@ -1,20 +1,189 @@
 .layout-container {
   display: flex;
   flex-direction: column;
-  /* height: 100vh; */
+  min-height: 100vh;
+  background-color: var(--color-background);
 }
 
-.layout-body {
+.layout-content {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  margin-top: 64px; /* Height of header */
 }
 
+/* Sidebar Styles */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+  border-right: 1px solid var(--color-surface-hover);
+  transition: all var(--transition-fast);
+  position: fixed;
+  height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  /* margin-top: 64px; Add margin to align with header */
+  padding-top: var(--spacing-md); /* Add padding for better spacing */
+}
 
+.sidebar.collapsed {
+  width: 64px;
+}
 
-.content-container {
+/* Redesigned Collapse Button */
+.collapse-button {
+  position: absolute;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 11;
+  box-shadow: var(--shadow-lg);
+  color: var(--color-background);
+  transition: all var(--transition-fast);
+  opacity: 0.9;
+}
+
+.collapse-button::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-primary-dark) 100%
+  );
+  z-index: -1;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.collapse-button:hover {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.collapse-button:hover::before {
+  opacity: 1;
+}
+
+.collapse-button svg {
+  transition: transform var(--transition-fast);
+}
+
+.collapse-button:hover svg {
+  transform: scale(1.1);
+}
+
+.sidebar-nav {
+  padding: var(--spacing-md) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-md); /* Add margin for better spacing */
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+.nav-item:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  transform: translateX(4px);
+}
+
+.nav-item.active {
+  background: var(--color-surface-hover);
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  border-left: 3px solid var(--color-primary);
+}
+
+.nav-item svg {
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.nav-item:hover svg {
+  transform: scale(1.1);
+}
+
+.nav-item.active svg {
+  color: var(--color-primary);
+}
+
+/* Main Content Styles */
+.main-content {
   flex: 1;
-  padding: 20px;
-  padding-top: 80px; /* Offset for fixed header */
-  overflow-y: auto;
+  margin-left: 240px;
+  transition: margin-left var(--transition-fast);
+  background-color: var(--color-background);
+}
+
+.main-content.expanded {
+  margin-left: 64px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+    margin-top: 0; /* Remove margin on mobile */
+    padding-top: 0; /* Remove padding on mobile */
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(0);
+    width: 240px;
+  }
+
+  .collapse-button {
+    right: -24px;
+    top: 20px;
+    transform: none;
+    width: 32px;
+    height: 32px;
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+
+  .collapse-button:hover {
+    transform: scale(1.05);
+  }
+
+  .collapse-button::before {
+    display: none; /* Remove gradient effect on mobile */
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .main-content.expanded {
+    margin-left: 0;
+  }
 }

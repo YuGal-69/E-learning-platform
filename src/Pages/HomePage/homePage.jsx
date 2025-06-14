@@ -1,172 +1,239 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import '../HomePage/homePage.css';
-import AOS from 'aos';
-import 'aos/dist/aos.css';
-import { motion } from 'framer-motion';
-import Button from '../../Components/common/Button';
+import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "../HomePage/homePage.css";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { motion } from "framer-motion";
+import Button from "../../components/common/Button";
+import { Shield, Terminal, Target, Zap, Lock, Code } from "lucide-react";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [videoState, setVideoState] = useState({
+    loading: true,
+    error: false,
+    playing: false,
+  });
+  const videoRef = useRef(null);
 
   useEffect(() => {
     AOS.init({ duration: 1200 });
+
+    const video = videoRef.current;
+    if (video) {
+      const handleCanPlay = () => {
+        setVideoState((prev) => ({ ...prev, loading: false }));
+        video.play().catch((error) => {
+          console.error("Error playing video:", error);
+          setVideoState((prev) => ({ ...prev, error: true }));
+        });
+      };
+
+      const handlePlay = () => {
+        setVideoState((prev) => ({ ...prev, playing: true }));
+      };
+
+      const handleError = () => {
+        console.error("Error loading video");
+        setVideoState((prev) => ({ ...prev, error: true, loading: false }));
+      };
+
+      video.addEventListener("canplay", handleCanPlay);
+      video.addEventListener("play", handlePlay);
+      video.addEventListener("error", handleError);
+
+      return () => {
+        video.removeEventListener("canplay", handleCanPlay);
+        video.removeEventListener("play", handlePlay);
+        video.removeEventListener("error", handleError);
+      };
+    }
   }, []);
 
   return (
-    <>
-      <main>
-        {/* Hero Section */}
-        <div style={{ height: '95vh', backgroundColor: '#0b121f' }} className="position-relative overflow-hidden hero-section">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="back-video d-none d-lg-block"
-            src="/video.mp4"
-            type="video/mp4"
-            style={{ width: '100%', height: 'fit-content' }}
-          ></video>
-          <div className="container-fluid position-absolute top-0 start-0 wrapper h-100">
-            <div className="row align-items-center justify-content-center h-100">
-              <div className="col-10 text-center">
-                <motion.div
-                  initial={{ y: -50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 1 }}
-                  className="mb-5"
-                >
-                  <h2 className="text-white cyber-heading">
-                    Hack the Game,<br />Secure the World!
-                  </h2>
-                  <p className="fs-6" style={{ color: '#8db1ff' }}>
-                    Enter a realm where every game teaches the secrets of cybersecurity.<br />
-                    Compete, learn, and protect the digital universe. Log in and let the games begin!
-                  </p>
-                </motion.div>
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <div>
-                    <Button className="main-btn me-3 glow-btn" onClick={() => navigate('/train')}>
-                      Train your team
-                    </Button>
-                    <Button className="main-btn fill-btn glow-btn" onClick={() => navigate('/signup')}>
-                      Join for FREE
-                    </Button>
-                  </div>
-                </motion.div>
+    <main className="htb-style">
+      {/* Hero Section */}
+      <div className="hero-section">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="back-video"
+          src="/video.mp4"
+        />
+        {videoState.loading && (
+          <div className="video-loading">
+            <div className="spinner"></div>
+            <p>Initializing...</p>
+          </div>
+        )}
+        {videoState.error && <div className="video-fallback" />}
+
+        <div className="hero-content">
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="hero-text"
+          >
+            <h1 className="main-title">
+              <span className="gradient-text">CyberNinja</span>
+              <br />
+              <span className="subtitle">
+                Advanced Cybersecurity Training Platform
+              </span>
+            </h1>
+            <p className="hero-description">
+              Master the art of ethical hacking through hands-on labs,
+              real-world challenges, and professional training paths.
+            </p>
+            <div className="cta-buttons">
+              <Button
+                className="primary-btn"
+                onClick={() => navigate("/signup")}
+              >
+                Start Hacking
+              </Button>
+              <Button
+                className="secondary-btn"
+                onClick={() => navigate("/train")}
+              >
+                View Labs
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Features Grid */}
+      <section className="features-grid">
+        <div className="container">
+          <div className="row g-4">
+            <div className="col-md-4" data-aos="fade-up">
+              <div className="feature-card">
+                <Terminal className="feature-icon" />
+                <h3>Interactive Labs</h3>
+                <p>
+                  Practice penetration testing in realistic environments with
+                  guided challenges.
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div className="feature-card">
+                <Target className="feature-icon" />
+                <h3>Real-World Scenarios</h3>
+                <p>
+                  Train on actual vulnerabilities and attack vectors used in the
+                  wild.
+                </p>
+              </div>
+            </div>
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="200">
+              <div className="feature-card">
+                <Shield className="feature-icon" />
+                <h3>Security Certifications</h3>
+                <p>Earn industry-recognized certifications as you progress.</p>
               </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Testimonials Section */}
-        <section id="testimonials" className="py-5" style={{ backgroundColor: '#0d1524', color: 'white' }}>
-          <div className="container text-center">
-            <h2 className="mb-4" data-aos="fade-down">What People Say</h2>
-            <div id="testimonialCarousel" className="carousel slide glassmorphic-card" data-bs-ride="carousel">
-              <div className="carousel-inner">
-                <div className="carousel-item active">
-                  <blockquote className="blockquote">
-                    <p className="mb-4">"CyberNinja transformed my skills. The labs are so interactive and fun!"</p>
-                    <footer className="blockquote-footer text-light">Jane Doe, Security Analyst</footer>
-                  </blockquote>
-                </div>
-                <div className="carousel-item">
-                  <blockquote className="blockquote">
-                    <p className="mb-4">"The hands-on approach really helped me understand complex concepts."</p>
-                    <footer className="blockquote-footer text-light">John Smith, Pentester</footer>
-                  </blockquote>
-                </div>
-                <div className="carousel-item">
-                  <blockquote className="blockquote">
-                    <p className="mb-4">"This platform made learning cybersecurity exciting!"</p>
-                    <footer className="blockquote-footer text-light">Emily White, Developer</footer>
-                  </blockquote>
-                </div>
+      {/* Stats Section */}
+      <section className="stats-section">
+        <div className="container">
+          <div className="row g-4">
+            <div className="col-md-3" data-aos="fade-up">
+              <div className="stat-card">
+                <h3>100+</h3>
+                <p>Active Labs</p>
               </div>
-              <button className="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-              </button>
-              <button className="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-              </button>
             </div>
-          </div>
-        </section>
-
-        {/* Labs Section */}
-        <section className="py-5 labs-section text-white" style={{ backgroundColor: '#0a0f1a' }}>
-          <div className="container text-center">
-            <h2 className="mb-4" data-aos="fade-up">Explore Real Hacking Labs</h2>
-            <p className="mb-5" data-aos="fade-up" data-aos-delay="200">Practice penetration testing, vulnerability scanning, and exploitation in a safe environment.</p>
-            <div className="row">
-              <div className="col-md-4" data-aos="flip-left">
-                <div className="lab-card p-4 rounded shadow">
-                  <h5 className="text-cyan">Network Sniffing</h5>
-                  <p>Use Wireshark to capture and analyze network packets in real-time.</p>
-                </div>
+            <div className="col-md-3" data-aos="fade-up" data-aos-delay="100">
+              <div className="stat-card">
+                <h3>50k+</h3>
+                <p>Active Users</p>
               </div>
-              <div className="col-md-4" data-aos="flip-left" data-aos-delay="300">
-                <div className="lab-card p-4 rounded shadow">
-                  <h5 className="text-cyan">SQL Injection</h5>
-                  <p>Learn how SQL injection works and how to prevent it in web apps.</p>
-                </div>
+            </div>
+            <div className="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div className="stat-card">
+                <h3>24/7</h3>
+                <p>Lab Access</p>
               </div>
-              <div className="col-md-4" data-aos="flip-left" data-aos-delay="600">
-                <div className="lab-card p-4 rounded shadow">
-                  <h5 className="text-cyan">Linux Exploitation</h5>
-                  <p>Crack weak passwords and escalate privileges on vulnerable machines.</p>
-                </div>
+            </div>
+            <div className="col-md-3" data-aos="fade-up" data-aos-delay="300">
+              <div className="stat-card">
+                <h3>15+</h3>
+                <p>Certification Paths</p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Progress Section */}
-        <section className="py-5 progress-section" style={{ backgroundColor: '#0b121f', color: 'white' }}>
-          <div className="container text-center">
-            <h2 className="mb-4" data-aos="fade-up">Level Up Your Skills</h2>
-            <p className="mb-5" data-aos="fade-up" data-aos-delay="200">Earn points, unlock badges, and track your growth as a hacker-in-training!</p>
-            <div className="row justify-content-center">
-              <div className="col-md-6" data-aos="fade-up" data-aos-delay="400">
-                <div className="progress-container p-4 rounded">
-                  <h5>Current Rank: <span className="text-warning">Cyber Ninja</span></h5>
-                  <div className="progress my-3" style={{ height: '20px' }}>
-                    <div className="progress-bar bg-success" style={{ width: '65%' }}>65%</div>
-                  </div>
-                  <p>Next Badge: <strong>Web Exploiter</strong></p>
-                </div>
+      {/* Learning Paths */}
+      <section className="learning-paths">
+        <div className="container">
+          <h2 className="section-title" data-aos="fade-up">
+            Choose Your Path
+          </h2>
+          <div className="row g-4">
+            <div className="col-md-4" data-aos="fade-up">
+              <div className="path-card">
+                <Lock className="path-icon" />
+                <h3>Penetration Testing</h3>
+                <p>
+                  Master the art of ethical hacking and security assessment.
+                </p>
+                <Button className="path-btn">Start Path</Button>
+              </div>
+            </div>
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="100">
+              <div className="path-card">
+                <Code className="path-icon" />
+                <h3>Secure Coding</h3>
+                <p>Learn to write secure code and prevent vulnerabilities.</p>
+                <Button className="path-btn">Start Path</Button>
+              </div>
+            </div>
+            <div className="col-md-4" data-aos="fade-up" data-aos-delay="200">
+              <div className="path-card">
+                <Zap className="path-icon" />
+                <h3>Red Team Operations</h3>
+                <p>Advanced offensive security and red teaming techniques.</p>
+                <Button className="path-btn">Start Path</Button>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Mindset Section */}
-        <section className="py-5 mindset-section text-center text-white" style={{ backgroundColor: '#09111c' }}>
-          <div className="container" data-aos="fade-in">
-            <h2 className="mb-4">Think Like a Hacker</h2>
-            <p className="mb-4">Understand vulnerabilities, exploit them, and secure systems. Ethical hacking is about breaking barriers—legally and intelligently.</p>
-            <a href="/start" className="btn btn-outline-light glow-btn">Start Your Journey</a>
-          </div>
-        </section>
-
-        {/* Scrolling Ticker */}
-        <section className="ticker bg-dark text-cyan py-2" style={{ borderTop: '1px solid #00ffea', borderBottom: '1px solid #00ffea' }}>
-          <div className="scrolling-text">
-            <div className="scrolling-content">
-              🚨 New RCE vulnerability in Apache — Patch Immediately | 💡 Ethical Hackers help identify zero-day bug in government systems | 🛡️ OWASP Top 10 updated with latest threat insights
-            </div>
-          </div>
-        </section>
-      </main>
-    </>
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="container text-center">
+          <h2 className="cta-title" data-aos="fade-up">
+            Ready to Level Up Your Security Skills?
+          </h2>
+          <p className="cta-text" data-aos="fade-up" data-aos-delay="100">
+            Join thousands of security professionals and start your journey
+            today.
+          </p>
+          <Button
+            className="cta-btn"
+            onClick={() => navigate("/signup")}
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            Get Started Now
+          </Button>
+        </div>
+      </section>
+    </main>
   );
 };
 
