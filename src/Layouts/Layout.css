@@ -92,7 +92,7 @@
   margin-top: var(--spacing-md); /* Add margin for better spacing */
 }
 
-.nav-item {
+.sidebar-nav-item {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -109,29 +109,29 @@
   font-weight: var(--font-weight-medium);
 }
 
-.nav-item:hover {
+.sidebar-nav-item:hover {
   background: var(--color-surface-hover);
   color: var(--color-text-primary);
   transform: translateX(4px);
 }
 
-.nav-item.active {
+.sidebar-nav-item.active {
   background: var(--color-surface-hover);
   color: var(--color-primary);
   font-weight: var(--font-weight-semibold);
   border-left: 3px solid var(--color-primary);
 }
 
-.nav-item svg {
+.sidebar-nav-item svg {
   flex-shrink: 0;
   transition: transform var(--transition-fast);
 }
 
-.nav-item:hover svg {
+.sidebar-nav-item:hover svg {
   transform: scale(1.1);
 }
 
-.nav-item.active svg {
+.sidebar-nav-item.active svg {
   color: var(--color-primary);
 }
 

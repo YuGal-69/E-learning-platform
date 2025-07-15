@@ -62,7 +62,7 @@ const IndexLayout = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`nav-item ${
+                className={`sidebar-nav-item ${
                   location.pathname === item.path ? "active" : ""
                 }`}
                 title={isCollapsed ? item.label : ""}

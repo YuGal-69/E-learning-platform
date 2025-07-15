@@ -71,7 +71,7 @@ const AdminLayout = () => {
               key={item.path}
               to={item.path}
               className={({ isActive }) =>
-                `nav-item ${isActive ? "active" : ""}`
+                `sidebar-nav-item ${isActive ? "active" : ""}`
               }
             >
               {item.icon}

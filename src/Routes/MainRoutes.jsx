@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Authentication Components
@@ -12,9 +11,9 @@ import AdminRoute from "../authentication/AdminRoute";
 import AdminLogin from "../authentication/admin/AdminLogin";
 import AdminSetup from "../authentication/admin/AdminSetup";
 
-import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
-import PublicLayout from "../Layouts/PublicLayout"; // Header only
-import AdminLayout from "../Layouts/AdminLayout";
+import IndexLayout from "../layouts/IndexLayout"; // Header + Sidebar
+import PublicLayout from "../layouts/PublicLayout"; // Header only
+import AdminLayout from "../layouts/AdminLayout";
 
 // Pages
 import HomePage from "../pages/HomePage/homePage";
@@ -22,14 +21,14 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import LearningPaths from "../pages/LearningPaths/LearningPaths";
 import PracticeLab from "../pages/PracticeLab/PracticeLab";
-import ChallengePage from "../Pages/Challenge/ChallengePage";
+import ChallengePage from "../pages/Challenge/ChallengePage";
 
 // Admin Pages
-import AdminDashboard from "../Pages/Admin/Dashboard/AdminDashboard";
-import CourseList from "../Pages/Admin/Courses/CourseList";
-import CourseForm from "../Pages/Admin/Courses/CourseForm";
-import Placeholder from "../Pages/Admin/Placeholder";
-import AdminSettings from "../Pages/Admin/Settings/AdminSettings";
+import AdminDashboard from "../pages/Admin/Dashboard/AdminDashboard";
+import CourseList from "../pages/Admin/Courses/CourseList";
+import CourseForm from "../pages/Admin/Courses/CourseForm";
+import Placeholder from "../pages/Admin/Placeholder";
+import AdminSettings from "../pages/Admin/Settings/AdminSettings";
 
 const router = createBrowserRouter([
   {
