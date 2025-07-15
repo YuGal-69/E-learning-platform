@@ -11,6 +11,7 @@ import {
   Menu,
 } from "lucide-react";
 import Header from "./Header/Header";
+import "./IndexLayout.css";
 
 const IndexLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
