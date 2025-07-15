@@ -11,9 +11,9 @@ import AdminRoute from "../authentication/AdminRoute";
 import AdminLogin from "../authentication/admin/AdminLogin";
 import AdminSetup from "../authentication/admin/AdminSetup";
 
-import IndexLayout from "../layouts/IndexLayout"; // Header + Sidebar
-import PublicLayout from "../layouts/PublicLayout"; // Header only
-import AdminLayout from "../layouts/AdminLayout";
+import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
+import PublicLayout from "../Layouts/PublicLayout"; // Header only
+import AdminLayout from "../Layouts/AdminLayout";
 
 // Pages
 import HomePage from "../pages/HomePage/homePage";
