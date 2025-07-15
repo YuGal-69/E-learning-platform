@@ -12,9 +12,9 @@ import AdminLogin from "../authentication/admin/AdminLogin";
 import AdminSetup from "../authentication/admin/AdminSetup";
 
 // Layouts
-import IndexLayout from "../_LayoutsTemp/IndexLayout"; // Header + Sidebar
-import PublicLayout from "../_LayoutsTemp/PublicLayout"; // Header only
-import AdminLayout from "../_LayoutsTemp/AdminLayout";
+import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
+import PublicLayout from "../Layouts/PublicLayout"; // Header only
+import AdminLayout from "../Layouts/AdminLayout";
 
 // Pages
 import HomePage from "../pages/HomePage/HomePage";
