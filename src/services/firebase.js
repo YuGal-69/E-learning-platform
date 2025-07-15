@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -20,48 +20,16 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Debug logging for Firebase config
-console.log("Firebase Config:", {
-  projectId: firebaseConfig.projectId,
-  authDomain: firebaseConfig.authDomain,
-  // Don't log sensitive values like apiKey
-});
-
-// Validate Firebase config
-const validateConfig = (config) => {
-  const requiredFields = [
-    "apiKey",
-    "authDomain",
-    "projectId",
-    "storageBucket",
-    "messagingSenderId",
-    "appId",
-  ];
-
-  const missingFields = requiredFields.filter((field) => !config[field]);
-
-  if (missingFields.length > 0) {
-    console.error(
-      "Missing required Firebase configuration fields:",
-      missingFields
-    );
-    return false;
-  }
-
-  return true;
-};
-
-// Initialize Firebase only once
+// Initialize Firebase App
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize services with proper error handling
+// Lazy service variables
 let _auth = null;
 let _db = null;
 let _storage = null;
 
 const initializeServices = async () => {
   try {
-    // Initialize Auth
     if (!_auth) {
       _auth = getAuth(app);
       if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === "true") {
@@ -69,7 +37,6 @@ const initializeServices = async () => {
       }
     }
 
-    // Initialize Firestore
     if (!_db) {
       _db = initializeFirestore(app, {
         localCache: persistentLocalCache({
@@ -81,7 +48,6 @@ const initializeServices = async () => {
       }
     }
 
-    // Initialize Storage
     if (!_storage) {
       _storage = getStorage(app);
       if (import.meta.env.VITE_USE_FIREBASE_EMULATOR === "true") {
@@ -96,13 +62,18 @@ const initializeServices = async () => {
   }
 };
 
-// Initialize services immediately
-const services = await initializeServices();
+// Default exports (to be initialized inside async IIFE)
+export let auth, db, storage;
 
-// Export initialized services
-export const { auth, db, storage } = services;
+// Async IIFE for top-level await workaround
+(async () => {
+  const services = await initializeServices();
+  auth = services.auth;
+  db = services.db;
+  storage = services.storage;
+})();
 
-// Export getter functions for lazy initialization if needed
+// Fallback accessors
 export const getFirebaseAuth = () => _auth || getAuth(app);
 export const getFirebaseDb = () =>
   _db ||
