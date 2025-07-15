@@ -1,6 +1,6 @@
 import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./context/UserContext";
-import MainRoutes from "./routes/MainRoutes";
+import MainRoutes from "./Routes/MainRoutes";
 import "./App.css";
 
 const App = () => {
