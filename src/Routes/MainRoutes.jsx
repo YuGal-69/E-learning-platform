@@ -18,6 +18,7 @@ import AdminLayout from "../Layouts/AdminLayout";
 
 // Pages
 import HomePage from "../pages/HomePage/HomePage";
+
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import LearningPaths from "../pages/LearningPaths/LearningPaths";
