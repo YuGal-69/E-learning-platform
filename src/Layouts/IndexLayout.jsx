@@ -10,8 +10,7 @@ import {
   ChevronRight,
   Menu,
 } from "lucide-react";
-import Header from "./Header/header";
-import "./Layout.css";
+import Header from "./Header/Header";
 
 const IndexLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
