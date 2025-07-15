@@ -1,22 +1,23 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Authentication Components
-import Login from "../authentication/login/login";
-import Signup from "../authentication/signup/signup";
-import Forgot from "../authentication/forgot/forgot";
-import ResetPassword from "../authentication/resetPassword/resetPassword";
-import ReMail from "../authentication/re-mail/re-mail";
+import Login from "../authentication/login/Login";
+import Signup from "../authentication/signup/Signup";
+import Forgot from "../authentication/forgot/Forgot";
+import ResetPassword from "../authentication/resetPassword/ResetPassword";
+import ReMail from "../authentication/re-mail/ReMail";
 import PrivateRoute from "../authentication/PrivateRoute";
 import AdminRoute from "../authentication/AdminRoute";
 import AdminLogin from "../authentication/admin/AdminLogin";
 import AdminSetup from "../authentication/admin/AdminSetup";
 
+// Layouts
 import IndexLayout from "../Layouts/IndexLayout"; // Header + Sidebar
 import PublicLayout from "../Layouts/PublicLayout"; // Header only
 import AdminLayout from "../Layouts/AdminLayout";
 
 // Pages
-import HomePage from "../pages/HomePage/homePage";
+import HomePage from "../pages/HomePage/HomePage";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Profile from "../pages/Profile/Profile";
 import LearningPaths from "../pages/LearningPaths/LearningPaths";
@@ -32,7 +33,7 @@ import AdminSettings from "../pages/Admin/Settings/AdminSettings";
 
 const router = createBrowserRouter([
   {
-    element: <PublicLayout />, // Public layout with header only
+    element: <PublicLayout />,
     children: [
       { path: "/", element: <HomePage /> },
       { path: "/login", element: <Login /> },
@@ -51,30 +52,12 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
-      {
-        path: "/dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "/profile",
-        element: <Profile />,
-      },
-      {
-        path: "/learning-paths",
-        element: <LearningPaths />,
-      },
-      {
-        path: "/practice-lab",
-        element: <PracticeLab />,
-      },
-      {
-        path: "/challenges",
-        element: <ChallengePage />,
-      },
-      {
-        path: "/challenges/:id",
-        element: <ChallengePage />,
-      },
+      { path: "/dashboard", element: <Dashboard /> },
+      { path: "/profile", element: <Profile /> },
+      { path: "/learning-paths", element: <LearningPaths /> },
+      { path: "/practice-lab", element: <PracticeLab /> },
+      { path: "/challenges", element: <ChallengePage /> },
+      { path: "/challenges/:id", element: <ChallengePage /> },
     ],
   },
   {
