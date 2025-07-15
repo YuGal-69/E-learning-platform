@@ -1,45 +1,49 @@
 // src/Layouts/Header.jsx
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../services/firebase";
+import { useUser } from "../../context/UserContext";
 import Button from "../../components/common/Button";
 import {
   LayoutDashboard,
   BookOpen,
   Target,
   Code2,
+  ChevronDown,
+  User,
+  Settings,
+  LogOut,
   Trophy,
   Users,
   Building2,
   GraduationCap,
   Briefcase,
-  User,
-  LogOut,
-  Settings,
   Bell,
-  ChevronDown,
 } from "lucide-react";
-import "./Header.css";
+import "./header.css";
 
 const Header = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, logout } = useUser();
   const location = useLocation();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
+  // Define pages that have sidebars (where we should hide main navigation)
+  const pagesWithSidebar = [
+    "/dashboard",
+    "/profile",
+    "/learning-paths",
+    "/practice-lab",
+    "/challenges",
+  ];
+
+  // Check if current page has a sidebar
+  const hasSidebar = pagesWithSidebar.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      await logout();
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -135,107 +139,109 @@ const Header = () => {
           className="collapse navbar-collapse justify-content-between"
           id="navbarSupportedContent"
         >
-          {/* Left side menu */}
-          <ul className="navbar-nav">
-            {!user ? (
-              // Public menu items
-              <>
-                <li className="nav-item dropdown">
-                  <button
-                    className="nav-link dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Learn <ChevronDown size={16} />
-                  </button>
-                  <ul className="dropdown-menu">
-                    {learnDropdownItems.map((item, index) => (
-                      <li key={index}>
-                        <Link className="dropdown-item" to={item.path}>
-                          {item.icon}
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="nav-item dropdown">
-                  <button
-                    className="nav-link dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Education <ChevronDown size={16} />
-                  </button>
-                  <ul className="dropdown-menu">
-                    {educationDropdownItems.map((item, index) => (
-                      <li key={index}>
-                        <Link className="dropdown-item" to={item.path}>
-                          {item.icon}
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="nav-item dropdown">
-                  <button
-                    className="nav-link dropdown-toggle"
-                    type="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    Business <ChevronDown size={16} />
-                  </button>
-                  <ul className="dropdown-menu">
-                    {businessDropdownItems.map((item, index) => (
-                      <li key={index}>
-                        <Link className="dropdown-item" to={item.path}>
-                          {item.icon}
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/pricing">
-                    Pricing
-                  </Link>
-                </li>
-              </>
-            ) : (
-              // Authenticated menu items
-              <>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/dashboard">
-                    <LayoutDashboard size={18} className="me-1" />
-                    Dashboard
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/learning-paths">
-                    <BookOpen size={18} className="me-1" />
-                    Learning Paths
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/challenges">
-                    <Target size={18} className="me-1" />
-                    Challenges
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link className="nav-link" to="/practice-lab">
-                    <Code2 size={18} className="me-1" />
-                    Practice Lab
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
+          {/* Left side menu - Hide on pages with sidebar */}
+          {!hasSidebar && (
+            <ul className="navbar-nav">
+              {!user ? (
+                // Public menu items
+                <>
+                  <li className="header-nav-item dropdown">
+                    <button
+                      className="nav-link dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Learn <ChevronDown size={16} />
+                    </button>
+                    <ul className="dropdown-menu">
+                      {learnDropdownItems.map((item, index) => (
+                        <li key={index}>
+                          <Link className="dropdown-item" to={item.path}>
+                            {item.icon}
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li className="header-nav-item dropdown">
+                    <button
+                      className="nav-link dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Education <ChevronDown size={16} />
+                    </button>
+                    <ul className="dropdown-menu">
+                      {educationDropdownItems.map((item, index) => (
+                        <li key={index}>
+                          <Link className="dropdown-item" to={item.path}>
+                            {item.icon}
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li className="header-nav-item dropdown">
+                    <button
+                      className="nav-link dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      Business <ChevronDown size={16} />
+                    </button>
+                    <ul className="dropdown-menu">
+                      {businessDropdownItems.map((item, index) => (
+                        <li key={index}>
+                          <Link className="dropdown-item" to={item.path}>
+                            {item.icon}
+                            {item.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  <li className="header-nav-item">
+                    <Link className="nav-link" to="/pricing">
+                      Pricing
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                // Authenticated menu items - Only show on pages without sidebar
+                <>
+                  <li className="header-nav-item">
+                    <Link className="nav-link" to="/dashboard">
+                      <LayoutDashboard size={18} className="me-1" />
+                      Dashboard
+                    </Link>
+                  </li>
+                  <li className="header-nav-item">
+                    <Link className="nav-link" to="/learning-paths">
+                      <BookOpen size={18} className="me-1" />
+                      Learning Paths
+                    </Link>
+                  </li>
+                  <li className="header-nav-item">
+                    <Link className="nav-link" to="/challenges">
+                      <Target size={18} className="me-1" />
+                      Challenges
+                    </Link>
+                  </li>
+                  <li className="header-nav-item">
+                    <Link className="nav-link" to="/practice-lab">
+                      <Code2 size={18} className="me-1" />
+                      Practice Lab
+                    </Link>
+                  </li>
+                </>
+              )}
+            </ul>
+          )}
 
           {/* Right side login/signup or user menu */}
           <ul className="navbar-nav">
@@ -257,7 +263,7 @@ const Header = () => {
               </>
             ) : (
               // User menu
-              <li className="nav-item dropdown">
+              <li className="header-nav-item dropdown">
                 <button
                   className="nav-link dropdown-toggle d-flex align-items-center gap-2"
                   type="button"

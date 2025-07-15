@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../Layouts/Header/header";
+import Header from "./Header/Header";
 import { Outlet } from "react-router-dom";
 
 const PublicLayout = () => (
@@ -8,7 +8,6 @@ const PublicLayout = () => (
     <main>
       <Outlet />
     </main>
-
   </>
 );
 

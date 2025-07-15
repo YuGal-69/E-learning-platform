@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import "../HomePage/homePage.css";
+import "./homePage.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { motion } from "framer-motion";

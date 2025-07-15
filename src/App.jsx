@@ -1,4 +1,3 @@
-import React from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./context/UserContext";
 import MainRoutes from "./Routes/MainRoutes";
