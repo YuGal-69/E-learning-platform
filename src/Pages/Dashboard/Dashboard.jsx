@@ -20,53 +20,15 @@ import { useUser } from "../../context/UserContext";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../services/firebase";
 import "./Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { userProfile } = useUser();
+  const navigate = useNavigate();
   const [currentUserPosition, setCurrentUserPosition] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [challenges] = useState([
-    {
-      id: 1,
-      title: "SQL Injection Hunter",
-      difficulty: "Medium",
-      xp: 150,
-      timeEstimate: "20 min",
-      category: "Web Security",
-      completed: false,
-      locked: false,
-    },
-    {
-      id: 2,
-      title: "Cryptography Master",
-      difficulty: "Hard",
-      xp: 300,
-      timeEstimate: "45 min",
-      category: "Cryptography",
-      completed: false,
-      locked: false,
-    },
-    {
-      id: 3,
-      title: "Network Defender",
-      difficulty: "Easy",
-      xp: 100,
-      timeEstimate: "15 min",
-      category: "Network Security",
-      completed: true,
-      locked: false,
-    },
-    {
-      id: 4,
-      title: "Advanced Malware Analysis",
-      difficulty: "Expert",
-      xp: 500,
-      timeEstimate: "90 min",
-      category: "Malware",
-      completed: false,
-      locked: true,
-    },
-  ]);
+  const [challenges, setChallenges] = useState([]);
+  const [challengesLoading, setChallengesLoading] = useState(true);
+  const [userRankLoading, setUserRankLoading] = useState(true);
 
   // Static top users as role models
   const staticTopUsers = [
@@ -127,10 +89,60 @@ const Dashboard = () => {
     },
   ];
 
+  // Simulate fetching challenges (replace with real fetch if available)
+  useEffect(() => {
+    setChallengesLoading(true);
+    setTimeout(() => {
+      setChallenges([
+        {
+          id: 1,
+          title: "SQL Injection Hunter",
+          difficulty: "Medium",
+          xp: 150,
+          timeEstimate: "20 min",
+          category: "Web Security",
+          completed: false,
+          locked: false,
+        },
+        {
+          id: 2,
+          title: "Cryptography Master",
+          difficulty: "Hard",
+          xp: 300,
+          timeEstimate: "45 min",
+          category: "Cryptography",
+          completed: false,
+          locked: false,
+        },
+        {
+          id: 3,
+          title: "Network Defender",
+          difficulty: "Easy",
+          xp: 100,
+          timeEstimate: "15 min",
+          category: "Network Security",
+          completed: true,
+          locked: false,
+        },
+        {
+          id: 4,
+          title: "Advanced Malware Analysis",
+          difficulty: "Expert",
+          xp: 500,
+          timeEstimate: "90 min",
+          category: "Malware",
+          completed: false,
+          locked: true,
+        },
+      ]);
+      setChallengesLoading(false);
+    }, 1200);
+  }, []);
+
   useEffect(() => {
     const fetchUserRank = async () => {
       if (!userProfile) {
-        setLoading(false);
+        setUserRankLoading(false);
         return;
       }
 
@@ -209,7 +221,7 @@ const Dashboard = () => {
       } catch (error) {
         console.error("Error fetching user rank:", error);
       } finally {
-        setLoading(false);
+        setUserRankLoading(false);
       }
     };
 
@@ -327,75 +339,88 @@ const Dashboard = () => {
                   <h3>
                     <Brain className="icon" /> Active Challenges
                   </h3>
-                  <Button variant="ghost" size="sm">
-                    View All
-                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/challenges")}>View All</Button>
                 </div>
               </Card.Header>
               <Card.Body>
-                <div className="challenge-list">
-                  {challenges.map((challenge) => (
-                    <Card
-                      key={challenge.id}
-                      variant="default"
-                      className={`challenge-card ${
-                        challenge.completed
-                          ? "completed"
-                          : challenge.locked
-                          ? "locked"
-                          : ""
-                      }`}
-                      hoverable={!challenge.locked}
-                    >
-                      <Card.Body>
-                        <div className="challenge-content">
-                          <div className="challenge-info">
-                            <h4>
-                              {challenge.locked && (
-                                <Lock className="icon small" />
-                              )}
-                              {challenge.title}
-                            </h4>
-                            <div
-                              className="difficulty-badge"
-                              style={{
-                                backgroundColor: getDifficultyColor(
-                                  challenge.difficulty
-                                ),
-                              }}
-                            >
-                              {challenge.difficulty}
-                            </div>
-                            <div className="challenge-meta">
-                              <span>
-                                <Trophy className="icon tiny" /> {challenge.xp}{" "}
-                                XP
-                              </span>
-                              <span>
-                                <Clock className="icon tiny" />{" "}
-                                {challenge.timeEstimate}
-                              </span>
-                              <span className="category">
-                                {challenge.category}
-                              </span>
-                            </div>
-                          </div>
-                          <Button
-                            variant={challenge.completed ? "ghost" : "primary"}
-                            size="sm"
-                            disabled={challenge.locked}
-                          >
-                            {challenge.completed
-                              ? "Completed"
+                {challengesLoading ? (
+                  <div className="dashboard-loading">
+                    <div className="loading-spinner"></div>
+                    <p>Loading challenges...</p>
+                  </div>
+                ) : (
+                  <div className="challenge-list">
+                    {challenges.map((challenge) => {
+                      const handleStart = () => {
+                        if (!challenge.locked) {
+                          navigate(`/challenges/${challenge.id}`);
+                        }
+                      };
+                      return (
+                        <Card
+                          key={challenge.id}
+                          variant="default"
+                          className={`challenge-card ${
+                            challenge.completed
+                              ? "completed"
                               : challenge.locked
-                              ? "Locked"
-                              : "Start"}
-                          </Button>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))}
-                </div>
+                              ? "locked"
+                              : ""
+                          }`}
+                          hoverable={!challenge.locked}
+                          onClick={handleStart}
+                          style={{ cursor: challenge.locked ? 'not-allowed' : 'pointer' }}
+                        >
+                          <Card.Body>
+                            <div className="challenge-content">
+                              <div className="challenge-info">
+                                <h4>
+                                  {challenge.locked && (
+                                    <Lock className="icon small" />
+                                  )}
+                                  {challenge.title}
+                                </h4>
+                                <div
+                                  className="difficulty-badge"
+                                  style={{
+                                    backgroundColor: getDifficultyColor(
+                                      challenge.difficulty
+                                    ),
+                                  }}
+                                >
+                                  {challenge.difficulty}
+                                </div>
+                                <div className="challenge-meta">
+                                  <span>
+                                    <Trophy className="icon tiny" /> {challenge.xp} XP
+                                  </span>
+                                  <span>
+                                    <Clock className="icon tiny" /> {challenge.timeEstimate}
+                                  </span>
+                                  <span className="category">
+                                    {challenge.category}
+                                  </span>
+                                </div>
+                              </div>
+                              <Button
+                                variant={challenge.completed ? "ghost" : "primary"}
+                                size="sm"
+                                disabled={challenge.locked}
+                                onClick={e => { e.stopPropagation(); handleStart(); }}
+                              >
+                                {challenge.completed
+                                  ? "Completed"
+                                  : challenge.locked
+                                  ? "Locked"
+                                  : "Start"}
+                              </Button>
+                            </div>
+                          </Card.Body>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
               </Card.Body>
             </Card>
           </div>
@@ -416,7 +441,7 @@ const Dashboard = () => {
                 </div>
               </Card.Header>
               <Card.Body>
-                {loading ? (
+                {userRankLoading ? (
                   <div className="leaderboard-loading">
                     <div className="loading-spinner"></div>
                     <p>Loading leaderboard...</p>
@@ -470,7 +495,7 @@ const Dashboard = () => {
                             <div className="player-info">
                               <div className="player-name-container">
                                 <p className="player-name">
-                                  {userProfile.name}
+                                  {(userProfile.displayName || userProfile.username || userProfile.email.split("@")[0])}
                                   <span className="you-badge">You</span>
                                 </p>
                                 <span className="player-title">
@@ -504,7 +529,7 @@ const Dashboard = () => {
             </Card>
 
             {/* Quick Actions */}
-            <Card variant="elevated" className="leaderboard-card">
+            <Card variant="elevated" className="leaderboard-card" style={{marginTop:"20px"}}>
               <Card.Header>
                 <h3>Quick Actions</h3>
               </Card.Header>
@@ -514,6 +539,7 @@ const Dashboard = () => {
                     variant="ghost"
                     fullWidth
                     icon={<BookOpen className="icon" />}
+                    onClick={() => navigate("/learning-paths")}
                   >
                     Study Materials
                   </Button>
@@ -521,6 +547,7 @@ const Dashboard = () => {
                     variant="ghost"
                     fullWidth
                     icon={<Users className="icon" />}
+                    onClick={() => window.open("https://github.com/YuGal-69", "_blank")}
                   >
                     Join Community
                   </Button>
@@ -528,6 +555,7 @@ const Dashboard = () => {
                     variant="ghost"
                     fullWidth
                     icon={<Star className="icon" />}
+                    onClick={() => navigate("/practice-lab")}
                   >
                     Practice Lab
                   </Button>

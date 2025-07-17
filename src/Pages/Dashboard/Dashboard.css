@@ -1,7 +1,7 @@
 .dashboard {
   min-height: 100vh;
   background-color: var(--color-background);
-  padding: calc(var(--spacing-xl) + 64px) var(--spacing-xl) var(--spacing-xl);
+  padding: calc(var(--spacing-xl) + 8px) var(--spacing-xl) var(--spacing-xl);
 }
 
 .dashboard-container {
@@ -33,7 +33,7 @@
 /* Stats Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
 }
@@ -430,9 +430,9 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .dashboard-grid {
+  /* .dashboard-grid {
     grid-template-columns: 1fr 280px;
-  }
+  } */
 
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -440,9 +440,9 @@
 }
 
 @media (max-width: 992px) {
-  .dashboard {
+  /* .dashboard {
     padding: calc(var(--spacing-lg) + 64px) var(--spacing-lg) var(--spacing-lg);
-  }
+  } */
 
   .dashboard-grid {
     grid-template-columns: 1fr;
@@ -456,9 +456,9 @@
 }
 
 @media (max-width: 768px) {
-  .dashboard {
+  /* .dashboard {
     padding: calc(var(--spacing-md) + 64px) var(--spacing-md) var(--spacing-md);
-  }
+  } */
 
   .welcome-section h2 {
     font-size: var(--font-size-2xl);
@@ -483,9 +483,9 @@
 }
 
 @media (max-width: 640px) {
-  .dashboard {
+  /* .dashboard {
     padding: calc(var(--spacing-sm) + 64px) var(--spacing-sm) var(--spacing-sm);
-  }
+  } */
 
   .stats-grid {
     grid-template-columns: 1fr;
@@ -662,4 +662,11 @@
 .leaderboard-entry:nth-child(3) .rank-badge::after {
   background: linear-gradient(135deg, #cd7f32, #b87333);
   opacity: 0.3;
+}
+
+.stat-card,
+.section-card,
+.challenge-card {
+  width: 100%;
+  /* Remove any fixed width if present */
 }

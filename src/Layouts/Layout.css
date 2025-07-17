@@ -147,6 +147,13 @@
   margin-left: 64px;
 }
 
+@media (max-width: 991px) {
+  .main-content,
+  .main-content.expanded {
+    margin-left: 0;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .sidebar {

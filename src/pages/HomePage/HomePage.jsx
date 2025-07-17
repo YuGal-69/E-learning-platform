@@ -8,9 +8,11 @@ import "aos/dist/aos.css";
 import { motion } from "framer-motion";
 import Button from "../../components/common/Button";
 import { Shield, Terminal, Target, Zap, Lock, Code } from "lucide-react";
+import { useUser } from "../../context/UserContext";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
   const [videoState, setVideoState] = useState({
     loading: true,
     error: false,
@@ -62,7 +64,7 @@ const HomePage = () => {
           loop
           muted
           playsInline
-          className="back-video"
+          className="back-video d-sm-block"
           src="/video.mp4"
         />
         {videoState.loading && (
@@ -94,13 +96,17 @@ const HomePage = () => {
             <div className="cta-buttons">
               <Button
                 className="primary-btn"
-                onClick={() => navigate("/signup")}
+                onClick={() =>
+                  user ? navigate("/learning-paths") : navigate("/signup")
+                }
               >
                 Start Hacking
               </Button>
               <Button
                 className="secondary-btn"
-                onClick={() => navigate("/train")}
+                onClick={() =>
+                  user ? navigate("/practice-lab") : navigate("/login")
+                }
               >
                 View Labs
               </Button>
@@ -225,7 +231,9 @@ const HomePage = () => {
           </p>
           <Button
             className="cta-btn"
-            onClick={() => navigate("/signup")}
+            onClick={() =>
+              user ? navigate("/dashboard") : navigate("/signup")
+            }
             data-aos="fade-up"
             data-aos-delay="200"
           >

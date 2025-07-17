@@ -1,0 +1,128 @@
+.main-footer {
+  background: #181a20;
+  color: #fff;
+  padding: 2.5rem 0 1.5rem 0;
+  border-top: 1px solid #23242b;
+  font-size: 1rem;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  flex: 2 1 300px;
+}
+
+.footer-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: #fff;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.footer-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ff3e3e;
+  letter-spacing: 1px;
+}
+
+.footer-desc {
+  color: #b0b3b8;
+  font-size: 1rem;
+  margin: 0.5rem 0 0 0;
+  max-width: 340px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1 1 180px;
+}
+
+.footer-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.footer-nav a:hover {
+  color: #ff3e3e;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  flex: 1 1 120px;
+}
+
+.footer-social a {
+  color: #fff;
+  font-size: 1.5rem;
+  transition: color 0.2s;
+}
+
+.footer-social a:hover {
+  color: #ff3e3e;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #b0b3b8;
+  font-size: 0.95rem;
+  margin-top: 2rem;
+  border-top: 1px solid #23242b;
+  padding-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+  .footer-brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+  .footer-nav, .footer-social {
+    flex-direction: row;
+    gap: 1.25rem;
+    margin-top: 1rem;
+  }
+  .footer-nav {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-title {
+    font-size: 1.1rem;
+  }
+  .footer-logo {
+    width: 40px;
+    height: 40px;
+  }
+  .footer-desc {
+    font-size: 0.95rem;
+    max-width: 220px;
+  }
+} 

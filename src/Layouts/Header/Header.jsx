@@ -1,5 +1,5 @@
 // src/Layouts/Header.jsx
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useUser } from "../../context/UserContext";
 import Button from "../../components/common/Button";
@@ -21,9 +21,20 @@ import {
 } from "lucide-react";
 import "./header.css";
 
+// Simulated notifications
+const simulatedNotifications = [
+  { id: 1, title: "Welcome to CyberNinja!", body: "Start your first challenge today.", read: false },
+  { id: 2, title: "New Lab Released", body: "Try the new Network Scanning Lab in Practice Lab.", read: false },
+  { id: 3, title: "Profile Updated", body: "Your profile changes have been saved.", read: true },
+];
+
 const Header = () => {
   const { user, logout } = useUser();
   const location = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const windowWidth = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState(simulatedNotifications);
 
   // Define pages that have sidebars (where we should hide main navigation)
   const pagesWithSidebar = [
@@ -99,16 +110,119 @@ const Header = () => {
     },
   ];
 
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const handleBellClick = () => setNotifOpen(true);
+  const handleNotifClose = () => setNotifOpen(false);
+  const markAllRead = () => setNotifications(notifications.map(n => ({ ...n, read: true })));
+
   const userDropdownItems = [
     { icon: <User size={18} />, label: "Profile", path: "/profile" },
     { icon: <Settings size={18} />, label: "Settings", path: "/settings" },
     {
-      icon: <Bell size={18} />,
+      icon: (
+        <span style={{ position: 'relative' }}>
+          <Bell size={18} onClick={handleBellClick} style={{ cursor: 'pointer' }} />
+          {unreadCount > 0 && (
+            <span style={{ position: 'absolute', top: -4, right: -4, background: '#ff3e3e', color: '#fff', borderRadius: '50%', fontSize: 10, width: 16, height: 16, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{unreadCount}</span>
+          )}
+        </span>
+      ),
       label: "Notifications",
-      path: "/notifications",
+      onClick: handleBellClick,
     },
     { icon: <LogOut size={18} />, label: "Logout", onClick: handleLogout },
   ];
+
+  // Icon map for mobile drawer
+  const iconMap = {
+    dashboard: (
+      <LayoutDashboard
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    "learning-paths": (
+      <BookOpen
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    challenges: (
+      <Target
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    "practice-lab": (
+      <Code2
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    profile: (
+      <User
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    login: (
+      <LogOut
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    signup: (
+      <User
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+    logout: (
+      <LogOut
+        size={20}
+        style={{ marginRight: "0.75rem" }}
+        className="mobile-nav-icon"
+      />
+    ),
+  };
+
+  // Notification Modal
+  const NotificationModal = () => (
+    notifOpen && (
+      <div className="notification-modal-overlay" onClick={handleNotifClose}>
+        <div className="notification-modal" onClick={e => e.stopPropagation()}>
+          <div className="notification-modal-header">
+            <h3>Notifications</h3>
+            <button className="notif-close" onClick={handleNotifClose}>&times;</button>
+          </div>
+          <div className="notification-modal-body">
+            {notifications.length === 0 ? (
+              <p className="no-notifications">No notifications yet.</p>
+            ) : (
+              <ul className="notification-list">
+                {notifications.map(n => (
+                  <li key={n.id} className={n.read ? "read" : "unread"}>
+                    <strong>{n.title}</strong>
+                    <p>{n.body}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+          {unreadCount > 0 && (
+            <button className="notif-mark-read" onClick={() => { markAllRead(); handleNotifClose(); }}>Mark all as read</button>
+          )}
+        </div>
+      </div>
+    )
+  );
 
   return (
     <nav className="navbar navbar-expand-lg fixed-top p-0">
@@ -121,23 +235,23 @@ const Header = () => {
           </span>
         </Link>
 
-        {/* Hamburger menu button */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <i className="fa-solid fa-bars-staggered"></i>
-        </button>
+        {/* Hamburger menu button - only show on mobile/tablet */}
+        {window.innerWidth < 992 && (
+          <button
+            className="navbar-toggler"
+            type="button"
+            aria-label="Open navigation menu"
+            onClick={() => setDrawerOpen(true)}
+          >
+            <span style={{ fontSize: "2rem", color: "#fff" }}>&#9776;</span>
+          </button>
+        )}
 
         {/* Navbar links */}
         <div
           className="collapse navbar-collapse justify-content-between"
           id="navbarSupportedContent"
+          style={window.innerWidth < 992 ? { display: "none" } : {}}
         >
           {/* Left side menu - Hide on pages with sidebar */}
           {!hasSidebar && (
@@ -303,6 +417,65 @@ const Header = () => {
           </ul>
         </div>
       </div>
+      <NotificationModal />
+
+      {/* Mobile Drawer Overlay */}
+      {drawerOpen && window.innerWidth < 992 && (
+        <div
+          className="mobile-drawer-overlay"
+          onClick={() => setDrawerOpen(false)}
+        >
+          <div className="mobile-drawer" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="drawer-close"
+              onClick={() => setDrawerOpen(false)}
+            >
+              &times;
+            </button>
+            <nav className="mobile-nav-links">
+              {user ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setDrawerOpen(false)}>
+                    {iconMap.dashboard}Dashboard
+                  </Link>
+                  <Link
+                    to="/learning-paths"
+                    onClick={() => setDrawerOpen(false)}
+                  >
+                    {iconMap["learning-paths"]}Learning Paths
+                  </Link>
+                  <Link to="/challenges" onClick={() => setDrawerOpen(false)}>
+                    {iconMap.challenges}Challenges
+                  </Link>
+                  <Link to="/practice-lab" onClick={() => setDrawerOpen(false)}>
+                    {iconMap["practice-lab"]}Practice Lab
+                  </Link>
+                  <Link to="/profile" onClick={() => setDrawerOpen(false)}>
+                    {iconMap.profile}Profile
+                  </Link>
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setDrawerOpen(false);
+                    }}
+                  >
+                    {iconMap.logout}Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setDrawerOpen(false)}>
+                    {iconMap.login}Login
+                  </Link>
+                  <Link to="/signup" onClick={() => setDrawerOpen(false)}>
+                    {iconMap.signup}Join for FREE
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
