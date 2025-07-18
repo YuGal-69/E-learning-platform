@@ -30,7 +30,7 @@
   border-radius: 12px;
   background: #fff;
   object-fit: contain;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .footer-title {
@@ -91,6 +91,105 @@
   padding-top: 1rem;
 }
 
+/* HTB-style accent and glow */
+.htb-accent {
+  color: #9fef00 !important;
+  text-shadow: 0 0 8px #9fef00, 0 0 2px #9fef00;
+}
+
+.neon-glow {
+  box-shadow: 0 0 16px 2px #9fef00, 0 0 4px #9fef00;
+  border: 2px solid #9fef00;
+}
+
+.htb-footer {
+  background: #101314;
+  border-top: 2px solid #9fef00;
+}
+
+.htb-footer .footer-nav a:hover,
+.htb-footer .footer-social a:hover {
+  color: #9fef00;
+}
+
+.htb-footer .footer-bottom {
+  border-top: 1px solid #222;
+  color: #7fff00;
+}
+
+.htb-footer .footer-title {
+  color: #9fef00;
+  font-family: "Segoe UI", "Roboto Mono", monospace;
+  letter-spacing: 2px;
+}
+
+.htb-footer .footer-logo {
+  background: #181a20;
+  border-radius: 16px;
+}
+
+.htb-footer .footer-desc {
+  color: #b0ffb3;
+}
+
+.footer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 2 1 320px;
+}
+
+.footer-section {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section h4 {
+  color: #9fef00;
+  font-size: 1.1rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.footer-section p,
+.footer-section a {
+  color: #b0ffb3;
+  font-size: 0.98rem;
+  margin: 0 0 0.25rem 0;
+  text-decoration: none;
+}
+
+.footer-section a:hover {
+  color: #5ef3a1;
+  text-decoration: underline;
+}
+
+@media (max-width: 900px) {
+  .footer-container {
+    flex-direction: column;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+  .footer-info {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer-info {
+    gap: 0.5rem;
+  }
+  .footer-section h4 {
+    font-size: 1rem;
+  }
+  .footer-section p,
+  .footer-section a {
+    font-size: 0.93rem;
+  }
+}
+
 @media (max-width: 768px) {
   .footer-container {
     flex-direction: column;
@@ -103,7 +202,8 @@
     align-items: center;
     gap: 1rem;
   }
-  .footer-nav, .footer-social {
+  .footer-nav,
+  .footer-social {
     flex-direction: row;
     gap: 1.25rem;
     margin-top: 1rem;
@@ -125,4 +225,4 @@
     font-size: 0.95rem;
     max-width: 220px;
   }
-} 
+}

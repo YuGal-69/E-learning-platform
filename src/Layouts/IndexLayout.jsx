@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Header from "./Header/Header";
 import "./Layout.css";
+import ChatAssistant from "../components/common/ChatAssistant";
 
 // Custom hook to get window width
 function useWindowWidth() {
@@ -99,6 +100,7 @@ const IndexLayout = () => {
           <Outlet />
         </main>
       </div>
+      <ChatAssistant />
     </div>
   );
 };
