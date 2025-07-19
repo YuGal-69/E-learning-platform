@@ -142,7 +142,7 @@ app.post("/api/chat", async (req, res) => {
     const prompt = messages.map(m => m.content).join('\n');
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent?key=${process.env.GOOGLE_API_KEY}`,
       {
         contents: [{ parts: [{ text: prompt }] }]
       }
@@ -151,6 +151,17 @@ app.post("/api/chat", async (req, res) => {
   } catch (err) {
     console.error("Error in /api/chat:", err.response?.data || err.message);
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/models", async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://generativelanguage.googleapis.com/v1/models?key=${process.env.GOOGLE_API_KEY}`
+    );
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message, details: err.response?.data });
   }
 });
 
