@@ -7,6 +7,7 @@ const ChatAssistant = () => {
     { sender: "assistant", text: "Hi! How can I help you with cybersecurity today?" }
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -15,17 +16,40 @@ const ChatAssistant = () => {
     }
   }, [messages, open]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
-    setMessages([...messages, { sender: "user", text: input }]);
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+    const userMessage = { sender: "user", text: input };
+    setMessages([...messages, userMessage]);
     setInput("");
-    // Here you would send the message to your backend/AI and add the response to messages
-    setTimeout(() => {
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: "You are a helpful cybersecurity assistant." },
+            ...messages.map(m => ({
+              role: m.sender === "user" ? "user" : "assistant",
+              content: m.text
+            })),
+            { role: "user", content: input }
+          ]
+        })
+      });
+      const data = await res.json();
       setMessages(msgs => [
         ...msgs,
-        { sender: "assistant", text: "This is a placeholder response from the AI assistant." }
+        { sender: "assistant", text: data.choices?.[0]?.message?.content || "Sorry, I couldn't get a response." }
       ]);
-    }, 1000);
+    } catch (err) {
+      setMessages(msgs => [
+        ...msgs,
+        { sender: "assistant", text: "Sorry, there was an error connecting to the AI assistant." }
+      ]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -47,6 +71,7 @@ const ChatAssistant = () => {
                 {msg.text}
               </div>
             ))}
+            {loading && <div className="chat-message assistant">Thinking...</div>}
             <div ref={messagesEndRef} />
           </div>
           <div className="chat-input">
@@ -56,8 +81,9 @@ const ChatAssistant = () => {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && handleSend()}
               placeholder="Type your question..."
+              disabled={loading}
             />
-            <button onClick={handleSend}>Send</button>
+            <button onClick={handleSend} disabled={loading}>Send</button>
           </div>
         </div>
       )}

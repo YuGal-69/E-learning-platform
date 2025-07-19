@@ -4,6 +4,7 @@ import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import axios from "axios";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -131,6 +132,25 @@ app.post("/api/challenges", async (req, res) => {
   } catch (error) {
     console.error("Error creating challenge:", error);
     res.status(500).json({ error: "Failed to create challenge" });
+  }
+});
+
+// Chat route
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { messages } = req.body;
+    const prompt = messages.map(m => m.content).join('\n');
+
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+      {
+        contents: [{ parts: [{ text: prompt }] }]
+      }
+    );
+    res.json(response.data);
+  } catch (err) {
+    console.error("Error in /api/chat:", err.response?.data || err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
