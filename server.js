@@ -149,6 +149,11 @@ app.post("/api/chat", async (req, res) => {
     );
     res.json(response.data);
   } catch (err) {
+    if (err.response?.status === 429) {
+      return res.status(429).json({
+        error: "The chat assistant has reached its usage limit for now. Please try again later."
+      });
+    }
     console.error("Error in /api/chat:", err.response?.data || err.message);
     res.status(500).json({ error: err.message });
   }
